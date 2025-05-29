@@ -1,0 +1,331 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Next.js Proje Tanıtımı{% endblock %}
+
+{% block extra_css %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<style>
+  .gradient-text {
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<header class="relative bg-gradient-to-r from-blue-50 to-purple-50 overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-200 to-purple-200 opacity-20"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 py-24 sm:py-32 text-center relative z-10">
+    <h1 class="text-5xl md:text-6xl font-extrabold mb-6">
+      <span class="gradient-text">enmelih.com</span>
+    </h1>
+    <p class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+      Performans, estetik ve teknolojiyi bir araya getiren yeni nesil web uygulaması. Next.js, TypeScript ve Tailwind
+      CSS ile geliştirilmiş, modern kullanıcı deneyimi sunuyor.
+    <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+      <a href="https://github.com/kullaniciadi/proje" target="_blank"
+        class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+        GitHub'da İncele
+      </a>
+      <a href="#features"
+        class="px-8 py-3 border border-gray-300 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-all">
+        Özellikleri Keşfet
+      </a>
+    </div>
+
+    <div class="mt-16 max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 bg-white">
+      <div class="bg-gray-800 py-2 px-4 flex items-center">
+        <div class="flex space-x-2">
+          <div class="w-3 h-3 rounded-full bg-red-500"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div class="text-xs text-gray-400 ml-4">enmelih.com</div>
+      </div>
+      <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+        <img src="/static/images/anasayfasiyah.jpeg" alt="Kod Önizleme-" class="w-full" />
+        <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+          <pre><code>
+-Ana Sayfada kulllanciyi modern ve samimi mesaj veren 
+hover efekti ile suslenmis bir ana sayfa oldu.
+</code></pre>
+          - Sag uste bulununan ve musaitlik durumuna gore renk degistiren butonlar.
+          <br>
+          -Bu butonlar google calander uzerinden canli takvim bilgilerini cekiyor.
+
+        </div>
+      </div>
+    </div>
+</header>
+<header>
+  <div class="mt-16 max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 bg-white">
+    <div class="bg-gray-800 py-2 px-4 flex items-center">
+      <div class="flex space-x-2">
+        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+      </div>
+      <div class="text-xs text-gray-400 ml-4">enmelih.com</div>
+    </div>
+    <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+      <img src="/static/images/enmelihanasayfaeyaz.jpeg" alt="Kod Önizleme-" class="w-full" />
+      <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+        <pre><code>
+          Kullici Taradindan degisebilen beyaz ve siyah tema desteği.
+</header>
+<body>
+      <div class="mt-16 max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 bg-white">
+      <div class="bg-gray-800 py-2 px-4 flex items-center">
+        <div class="flex space-x-2">
+          <div class="w-3 h-3 rounded-full bg-red-500"></div>
+          <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div class="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div class="text-xs text-gray-400 ml-4">enmelih.com</div>
+      </div>
+      <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+        <img src="/static/images/havadurumuve resim.jpeg" alt="Kod Önizleme-" class="w-full" />
+<div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+        <pre><code>
+          - Hava durumu ve resim galerisi.
+          - Hava durumu bilgileri, kullanıcının konumuna göre dinamik olarak gösterilir.
+          - Alt Kisimda footer bolumunde resim galerisi bulunur.
+          -Fotograflar Unsplash API'sinden çekilir.
+          -Fotograflar, her zaman random olarak değişir ve kullanıcıya farklı görseller sunar.
+
+</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-16 max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 bg-white">
+    <div class="bg-gray-800 py-2 px-4 flex items-center">
+      <div class="flex space-x-2">
+        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+      </div>
+      <div class="text-xs text-gray-400 ml-4">enmelih.com</div>
+    </div>
+    <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+      <img src="/static/images/randevualmasayfasi.jpeg" alt="Kod Önizleme-" class="w-full" />
+      <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+        <pre><code>
+          - Cal.com apisi ile entegre edilmiş randevu alma sayfası.
+          - Kullanıcılar, takvim üzerinden uygun zaman dilimlerini seçerek randevu alabilir.
+          - Randevu alma işlemi, kullanıcı dostu bir arayüzle kolaylaştırılmıştır.
+          - Randevu alindiktan sonra kullaniciya onay maili gonderilir.
+</code></pre>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="mt-16 max-w-4xl mx-auto rounded-xl shadow-2xl overflow-hidden border border-gray-200 bg-white">
+    <div class="bg-gray-800 py-2 px-4 flex items-center">
+      <div class="flex space-x-2">
+        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+      </div>
+      <div class="text-xs text-gray-400 ml-4">enmelih.com</div>
+    </div>
+    <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+      <img src="/static/images/postsayfasi.jpeg" alt="Kod Önizleme-" class="w-full" />
+      <div class="p-6 bg-gray-900 text-gray-100 font-mono text-sm overflow-x-auto">
+        <pre><code>
+          - Unsplash API'sindnden profildeki fotograf galerinisi canli olarak cekilir.
+          - Web site sahibi sadece Unsplash uzerinden fotogarfalri yonetebilir.
+          - Kullanicaya esnek bir deneyim sunar.
+
+</code></pre>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- Features Section -->
+  <section id="features" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Proje Özellikleri</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Modern web geliştirmenin tüm avantajlarını bir arada
+          sunuyoruz</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div
+          class="feature-card bg-white p-8 rounded-xl border border-gray-100 transition-all duration-300 hover:border-purple-200">
+          <div class="w-14 h-14 bg-blue-50 rounded-lg flex items-center justify-center mb-6">
+            <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_5tkzkblw.json" background="transparent"
+              speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">⚡ Yüksek Performans</h3>
+          <p class="text-gray-600">Next.js'in SSR, SSG ve ISR özellikleri sayesinde ultra hızlı sayfa yükleme süreleri
+            ve kusursuz kullanıcı deneyimi.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div
+          class="feature-card bg-white p-8 rounded-xl border border-gray-100 transition-all duration-300 hover:border-purple-200">
+          <div class="w-14 h-14 bg-purple-50 rounded-lg flex items-center justify-center mb-6">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_sk5h1kfn.json" background="transparent"
+              speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">📱 Mobil Uyumlu</h3>
+          <p class="text-gray-600">Tüm cihazlara kusursuz uyum sağlayan, modern flexbox ve grid tabanlı duyarlı tasarım.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div
+          class="feature-card bg-white p-8 rounded-xl border border-gray-100 transition-all duration-300 hover:border-purple-200">
+          <div class="w-14 h-14 bg-green-50 rounded-lg flex items-center justify-center mb-6">
+            <lottie-player src="httpsassets1.lottiefiles.com/packages/lf20_80nu1g7i.json" background="transparent"
+              speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">🔍 SEO Optimize</h3>
+          <p class="text-gray-600">Arama motorlarında üst sıralar için optimize edilmiş, Next.js Metadata API ile
+            güçlendirilmiş yapı.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div
+          class="feature-card bg-white p-8 rounded-xl border border-gray-100 transition-all duration-300 hover:border-purple-200">
+          <div class="w-14 h-14 bg-yellow-50 rounded-lg flex items-center justify-center mb-6">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_gn0tojcq.json" background="transparent"
+              speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">🎨 Modern UI</h3>
+          <p class="text-gray-600">Tailwind CSS ve Framer Motion ile tasarlanmış, animasyonlu, sade ve kullanıcı dostu
+            arayüz.</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div
+          class="feature-card bg-white p-8 rounded-xl border border-gray-100 transition-all duration-300 hover:border-purple-200">
+          <div class="w-14 h-14 bg-indigo-50 rounded-lg flex items-center justify-center mb-6">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_6aY4Bc.json" background="transparent"
+              speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">🌗 Tema Desteği</h3>
+          <p class="text-gray-600">Kullanıcı tercihlerine göre dinamik karanlık/aydınlık tema desteği ve sistem teması
+            entegrasyonu.</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div
+          class="feature-card bg-white p-8 rounded-xl border border-gray-100 transition-all duration-300 hover:border-purple-200">
+          <div class="w-14 h-14 bg-red-50 rounded-lg flex items-center justify-center mb-6">
+            <lottie-player src="https://assets1.lottiefiles.com/packages/lf20_vybwn7df.json" background="transparent"
+              speed="1" style="width: 40px; height: 40px;" loop autoplay></lottie-player>
+          </div>
+          <h3 class="text-xl font-semibold mb-3">🐳 Docker Desteği</h3>
+          <p class="text-gray-600">Konteynerleştirilmiş yapı sayesinde hızlı ve kolay dağıtım imkanı. CI/CD
+            pipeline'ları için hazır.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack Section -->
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Teknoloji Yığını</h2>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">Projede kullanılan modern teknolojiler</p>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" class="h-12 w-12"
+            alt="React" />
+          <span class="mt-3 font-medium">React</span>
+        </div>
+
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg"
+            class="h-12 w-12 invert dark:invert-0" alt="Next.js" />
+          <span class="mt-3 font-medium">Next.js</span>
+        </div>
+
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg"
+            class="h-12 w-12" alt="JavaScript" />
+          <span class="mt-3 font-medium">JavaScript</span>
+        </div>
+
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg"
+            class="h-12 w-12" alt="TypeScript" />
+          <span class="mt-3 font-medium">TypeScript</span>
+        </div>
+
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg"
+            class="h-12 w-12" alt="Tailwind CSS" />
+          <span class="mt-3 font-medium">Tailwind CSS</span>
+        </div>
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg" class="h-12 w-12"
+            alt="Docker" />
+          <span class="mt-3 font-medium">Docker</span>
+        </div>
+
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" class="h-12 w-12"
+            alt="Python" />
+          <span class="mt-3 font-medium">Python</span>
+        </div>
+
+        <div class="flex flex-col items-center p-6 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow">
+          <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" class="h-12 w-12"
+            alt="Django" />
+          <span class="mt-3 font-medium">Django</span>
+        </div>
+      </div>
+
+
+    </div>
+    </div>
+  </section>
+
+  <!-- Demo Section -->
+  <section class="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <h2 class="text-3xl md:text-4xl font-bold mb-6">🚀 Canlı Demo</h2>
+      <p class="text-xl mb-8 max-w-3xl mx-auto opacity-90">Projeyi canlı olarak deneyimleyin ve tüm özellikleri keşfedin
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <a href="https://senin-site-linkin.com" target="_blank"
+          class="px-8 py-3 bg-white text-blue-600 font-medium rounded-lg shadow-lg hover:bg-gray-100 transition-all transform hover:scale-105">
+          Canlı Demo'yu Gör
+        </a>
+        <a href="https://github.com/kullaniciadi/proje" target="_blank"
+          class="px-8 py-3 border border-white text-white font-medium rounded-lg hover:bg-white hover:bg-opacity-10 transition-all">
+          GitHub Reposu
+        </a>
+      </div>
+    </div>
+  </section>
+  {% endblock %}
+
+  {% block extra_js %}
+  <!-- Any additional JavaScript specific to this page can go here -->
+  {% endblock %}

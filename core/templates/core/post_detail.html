@@ -1,0 +1,224 @@
+{% extends 'core/base.html' %}
+{% load humanize %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .avatar-md {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+    }
+    .avatar-sm {
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+    }
+    .reply-item {
+        margin-left: 2rem !important;
+    }
+    .captcha {
+        margin: 15px 0;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+    .captcha img {
+        margin-bottom: 10px;
+        border: 1px solid #dee2e6;
+    }
+    .featured-image {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        transition: height 0.3s ease;
+    }
+    .full-width-image {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        object-position: center;
+        transition: height 0.3s ease;
+    }
+    @media (max-width: 768px) {
+        .full-width-image {
+            height: 300px;
+        }
+    }
+    .reply-form {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Gönderi resmi -->
+{% if post.image %}
+<div class="featured-image" id="featured-image">
+    <img src="{{ post.image.url }}" class="full-width-image" alt="{{ post.title }}" id="header-image">
+</div>
+{% endif %}
+
+<!-- Ana container -->
+<article class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- Gönderi içeriği -->
+            <div class="card shadow">
+                <div class="card-body">
+                    <h1 class="card-title mb-4">{{ post.title }}</h1>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="author-info">
+                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle me-2 avatar-md" alt="Author">
+                            <span class="fw-bold">{{ post.author }}</span>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar me-1"></i>{{ post.date_posted|naturaltime }}
+                        </small>
+                    </div>
+                    <div class="content">
+                        {{ post.content|safe }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yorumlar -->
+            <div class="comments-section mt-5">
+                <h3 class="mb-4">💬 Yorumlar ({{ comments.count }})</h3>
+
+                <div class="comment-list">
+                    {% for comment in comments %}
+                    <div class="comment-item bg-white p-4 rounded-3 shadow-sm mb-3">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <img src="{% static 'images/default-avatar.png' %}" 
+                                 class="rounded-circle border avatar-md" 
+                                 alt="{{ comment.first_name }}">
+                            <div>
+                                <h6 class="mb-0 fw-bold">
+                                    {{ comment.first_name }} {{ comment.last_name }}
+                                </h6>
+                                <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
+                            </div>
+                        </div>
+                        <div class="comment-content">
+                            {{ comment.content|linebreaks }}
+                        </div>
+
+                        <!-- Yanıt butonu -->
+                        <button class="btn btn-sm btn-outline-secondary reply-btn" 
+                                onclick="toggleReplyForm('{{ comment.id }}')">
+                            <i class="fas fa-reply me-1"></i>Yanıtla
+                        </button>
+
+                        <!-- Yanıt formu (gizli) -->
+                        <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
+                            <form method="POST" action="{% url 'core:post_detail' post.slug %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                                <div class="mb-3">
+                                    <label for="id_first_name_{{ comment.id }}" class="form-label">Adınız</label>
+                                    <input type="text" name="first_name" class="form-control" id="id_first_name_{{ comment.id }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="id_last_name_{{ comment.id }}" class="form-label">Soyadınız</label>
+                                    <input type="text" name="last_name" class="form-control" id="id_last_name_{{ comment.id }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="id_content_{{ comment.id }}" class="form-label">Yanıtınız</label>
+                                    <textarea name="content" class="form-control" id="id_content_{{ comment.id }}" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3 captcha">
+                                    {{ form.captcha }}  <!-- CAPTCHA -->
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-paper-plane me-2"></i>Yanıt Gönder
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Yanıtlar -->
+                        {% for reply in comment.replies.all %}
+                        <div class="reply-item ms-5 mt-3 p-3 bg-light rounded-3">
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <img src="{% static 'images/default-avatar.png' %}" 
+                                     class="rounded-circle border avatar-sm" 
+                                     alt="{{ reply.first_name }}">
+                                <div>
+                                    <h6 class="mb-0 fw-bold">
+                                        {{ reply.first_name }} {{ reply.last_name }}
+                                    </h6>
+                                    <small class="text-muted">{{ reply.created_at|naturaltime }}</small>
+                                </div>
+                            </div>
+                            <div class="reply-content">
+                                {{ reply.content|linebreaks }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% empty %}
+                    <div class="alert alert-info">
+                        📭 İlk yorumu sen yap!
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Yorum formu -->
+                <div class="comment-form mt-5 p-4 bg-light rounded-3">
+                    <h4 class="mb-4">✏️ Yorum Yaz</h4>
+                    <form method="POST" action="{% url 'core:post_detail' post.slug %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_first_name" class="form-label">Adınız</label>
+                            <input type="text" name="first_name" class="form-control" id="id_first_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_last_name" class="form-label">Soyadınız</label>
+                            <input type="text" name="last_name" class="form-control" id="id_last_name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_content" class="form-label">Yorumunuz</label>
+                            <textarea name="content" class="form-control" id="id_content" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3 captcha">
+                            {{ form.captcha }}
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Yorumu Gönder
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</article>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Resim boyutunu scroll ile küçült
+    window.addEventListener('scroll', function() {
+        const headerImage = document.getElementById('header-image');
+        if (!headerImage) return;
+        const scrollPosition = window.scrollY;
+        const newHeight = Math.max(200, 500 - scrollPosition * 0.5);
+        headerImage.style.height = `${newHeight}px`;
+    });
+
+    // Yanıt formunu aç/kapa
+    function toggleReplyForm(commentId) {
+        const form = document.getElementById('reply-form-' + commentId);
+        if (!form) return;
+        if (form.style.display === 'none' || form.style.display === '') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+</script>
+{% endblock %}

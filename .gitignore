@@ -1,0 +1,19 @@
+# Ortak gizli dosyalar
+.env
+__pycache__/
+*.pyc
+
+# Django static & media (deployment sonrası klasörler)
+staticfiles/
+media/
+
+# VS Code klasörü
+.vscode/
+
+# SQLite veritabanı (dev ortamı için)
+db.sqlite3
+
+# Log dosyaları
+# Log dosyaları
+*.log
+logs/

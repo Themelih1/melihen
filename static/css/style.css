@@ -1,0 +1,200 @@
+:root {
+  --primary-color: #0d6efd;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+}
+
+/* Genel Stiller */
+body {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+/* Kart Stilleri */
+.card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: #fff;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  height: 400px;
+  object-fit: cover;
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Diğer Stiller */
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #495057;
+}
+
+.profile-image {
+  border: 5px solid #fff;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+/* Arka Plan Resmi */
+
+
+.background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden; /* Resmin taşmasını engeller */
+}
+
+.background-image {
+  background-size: contain; /* Resmin tamamını göster, kesme */
+  background-position: center; /* Resmi ortala */
+  background-repeat: no-repeat; /* Resmin tekrar etmesini engelle */
+  width: 100%; /* Genişlik */
+  height: 100vh; /* Ekran yüksekliği kadar */
+  position: fixed; /* Sabit pozisyon */
+  top: 0;
+  left: 0;
+  z-index: -1; /* İçeriğin altında kalmasını sağlar */
+  background-color: #f0f0f0; /* Resmin etrafındaki boşlukları doldurmak için arka plan rengi */
+}
+
+article {
+  background-color: rgba(255, 255, 255, 0.9); /* Yarı saydam beyaz arka plan */
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  position: relative; /* İçeriğin arka plan resminin üzerinde kalmasını sağlar */
+  z-index: 1; /* İçeriğin üstte görünmesini sağlar */
+}
+/* Dark Mode */
+[data-bs-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+  --card-bg: #2d2d2d;
+}
+/* Yorum Bölümü */
+.comments-section {
+  position: relative;
+  z-index: 2;
+}
+
+.comment-item {
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.comment-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.comment-content {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+.comment-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  min-height: 120px;
+  transition: all 0.3s ease;
+}
+
+.comment-form textarea:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+}
+
+.avatar-md {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+}
+
+.comment-form textarea {
+  width: 100%;
+  min-height: 150px;
+  padding: 1rem;
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  font-size: 1rem;
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.comment-form textarea:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+  outline: none;
+}
+
+.comment-item {
+  transition: transform 0.3s ease;
+}
+
+.comment-item:hover {
+  transform: translateX(5px);
+}
+
+/* Profil Resmi için Varsayılan Stil */
+img[src*="default-avatar.png"] {
+  filter: grayscale(100%);
+  opacity: 0.8;
+}
+
+.comment-actions {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  text-align: right;
+}
+
+.comment-actions button {
+  transition: all 0.3s ease;
+}
+
+.comment-actions button:hover {
+  transform: scale(1.05);
+}

@@ -1,0 +1,13 @@
+<!-- core/templates/core/comment_item.html -->
+<div class="comment">
+    <strong>{{ comment.first_name }} {{ comment.last_name }}</strong>
+    <small>{{ comment.created_at }}</small>
+    <p>{{ comment.content }}</p>
+    {% if comment.children.all %}
+        <div class="replies">
+            {% for reply in comment.children.all %}
+                {% include 'core/comment_item.html' with comment=reply %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>

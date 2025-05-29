@@ -1,0 +1,44 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+    {% if form.errors and not form.non_field_errors %}
+        <p class="errornote">
+            {% if form.errors.items|length == 1 %}
+                Please correct the error below.
+            {% else %}
+                Please correct the errors below.
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="errornote">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
+
+    {% if account_locked %}
+        <p class="errornote">
+            Your account has been locked. Please try again later.
+        </p>
+    {% endif %}
+
+    <div id="content" class="colM">
+        <h1>Login</h1>
+        <div id="content-main">
+            <form method="post" id="login-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    {{ form.username.label_tag }} {{ form.username }}
+                </div>
+                <div class="form-row">
+                    {{ form.password.label_tag }} {{ form.password }}
+                </div>
+                <div class="submit-row">
+                    <input type="submit" value="Log in">
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

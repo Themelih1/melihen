@@ -1,0 +1,147 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ project.title }} - Proje Detayı{% endblock %}
+
+{% block content %}
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+  <div class="max-w-3xl mx-auto">
+    <!-- Başlık ve Meta Bilgiler -->
+    <div class="mb-8 text-center">
+      <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-6">
+        {{ project.category|default:"Web Projesi" }}
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+        {{ project.title }}
+      </h1>
+      <div class="flex items-center justify-center space-x-4 text-gray-500">
+        <span class="flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          {{ project.date_posted|date:"d M Y" }}
+        </span>
+        {% if project.read_time %}
+        <span class="flex items-center">
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          {{ project.read_time }} dakika
+        </span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Kapak Görseli -->
+    {% if project.image %}
+    <div class="relative rounded-2xl overflow-hidden mb-12 shadow-xl border border-gray-200">
+      <img 
+        src="{{ project.image.url }}" 
+        alt="{{ project.title }}" 
+        class="w-full h-auto max-h-[32rem] object-cover"
+        loading="lazy"
+      >
+      <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+    </div>
+    {% endif %}
+
+    <!-- Proje İçeriği -->
+    <div class="prose prose-indigo prose-lg max-w-none mx-auto mb-12">
+      {{ project.description|safe }}
+    </div>
+
+    <!-- Teknolojiler -->
+    {% if project.technologies %}
+    <div class="mb-12">
+      <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+        </svg>
+        Kullanılan Teknolojiler
+      </h3>
+      <div class="flex flex-wrap gap-2">
+        {% for tech in project.technologies.split %}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+            {{ tech }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Proje Linki -->
+    {% if project.url %}
+    <div class="flex flex-col sm:flex-row gap-4 mt-12 pt-8 border-t border-gray-200">
+      <a href="{{ project.url }}" target="_blank" rel="noopener noreferrer"
+         class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:-translate-y-1">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+        </svg>
+        Canlı Demo Görüntüle
+      </a>
+      <a href="{% url 'projects:list' %}" 
+         class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
+        </svg>
+        Tüm Projelere Dön
+      </a>
+    </div>
+    {% endif %}
+
+    <!-- Ekstra Proje Görselleri -->
+    {% if project.extra_images.all %}
+    <div class="mt-16">
+      <h3 class="text-xl font-semibold text-gray-900 mb-6">Proje Görselleri</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {% for image in project.extra_images.all %}
+        <div class="rounded-lg overflow-hidden shadow-md border border-gray-200">
+          <img src="{{ image.image.url }}" alt="{{ project.title }} - Ekran görüntüsü {{ forloop.counter }}" 
+               class="w-full h-auto object-cover hover:scale-105 transition-transform duration-300 cursor-zoom-in">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Tailwind Typography için özel stil -->
+<style>
+  .prose {
+    color: #374151;
+  }
+  .prose a {
+    color: #4f46e5;
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .prose a:hover {
+    text-decoration: underline;
+  }
+  .prose img {
+    border-radius: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .prose h2 {
+    color: #111827;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  .prose h3 {
+    color: #111827;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+  .prose code {
+    background-color: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+</style>
+{% endblock %}

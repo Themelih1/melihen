@@ -1,0 +1,270 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h1 class="display-5 fw-light">Blog</h1>
+        <div class="position-relative">
+            <button class="btn btn-sm btn-outline-dark rounded-pill px-3 py-2 d-flex align-items-center" type="button"
+                id="filterButton" aria-expanded="false" aria-controls="filterCollapse"
+                data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+                <i class="bi bi-funnel me-2"></i>
+                Filtrele
+            </button>
+
+            <div id="filterCollapse" class="collapse position-absolute end-0 mt-2 bg-white p-3 rounded shadow" 
+                style="width: 280px; z-index: 1000;">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <h6 class="card-title mb-3">Kategoriler</h6>
+                        <div class="list-group list-group-flush mb-4">
+                            <a href="?category=all&sort={{ request.GET.sort }}" 
+                               class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
+                                Tümü
+                            </a>
+                            {% for category in categories %}
+                            <a href="?category={{ category.slug }}&sort={{ request.GET.sort }}" 
+                               class="list-group-item list-group-item-action {% if selected_category.slug == category.slug %}active{% endif %}">
+                                {{ category.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        
+                        <h6 class="card-title mb-3">Sırala</h6>
+                        <div class="list-group list-group-flush">
+                            <a href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}sort=newest" 
+                               class="list-group-item list-group-item-action {% if request.GET.sort == 'newest' or not request.GET.sort %}active{% endif %}">
+                                Yeniden Eskiye
+                            </a>
+                            <a href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}sort=oldest" 
+                               class="list-group-item list-group-item-action {% if request.GET.sort == 'oldest' %}active{% endif %}">
+                                Eskiden Yeniye
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-lg-8 mx-auto mb-5">
+            <article class="post-card">
+                {% if post.image %}
+                <div class="post-image mb-4 ratio ratio-16x9">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}"
+                        class="img-fluid rounded object-fit-cover">
+                </div>
+                {% endif %}
+
+                <div class="post-meta mb-2">
+                    <span class="text-muted">{{ post.date_posted|date:"d F Y" }}</span>
+                    {% if post.category %}
+                    <span class="badge bg-light text-dark ms-2">{{ post.category.name }}</span>
+                    {% endif %}
+                </div>
+
+                <h2 class="post-title mb-3">
+                    <a href="{% url 'core:post_detail' post.slug %}" class="text-decoration-none text-dark">{{ post.title }}</a>
+                </h2>
+
+                <div class="post-excerpt mb-3" style="font-family: 'Georgia', serif; line-height: 1.8;">
+                    {{ post.content|truncatewords:40|safe }}
+                </div>
+
+                <a href="{% url 'core:post_detail' post.slug %}" class="read-more">
+                    Devamını oku →
+                </a>
+            </article>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <p class="text-muted">Henüz yayınlanmış bir yazı bulunmamaktadır.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Sayfalama -->
+    {% if posts.has_other_pages %}
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page=1{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                            aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ posts.previous_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                            aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for i in posts.paginator.page_range %}
+                    {% if posts.number == i %}
+                    <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link"
+                            href="?page={{ i }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ i }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ posts.next_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                            aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                            href="?page={{ posts.paginator.num_pages }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                            aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .post-card {
+        padding: 2rem;
+        background: white;
+        border-radius: 8px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .post-image {
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .post-image img {
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .post-image:hover img {
+        transform: scale(1.03);
+    }
+
+    .post-title {
+        font-size: 1.8rem;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .post-title a:hover {
+        color: #2c3e50;
+    }
+
+    .post-excerpt {
+        color: #444;
+        font-size: 1.1rem;
+    }
+
+    .read-more {
+        color: #2c3e50;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-block;
+        position: relative;
+    }
+
+    .read-more:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        transform: scaleX(0);
+        height: 1px;
+        bottom: -2px;
+        left: 0;
+        background-color: #2c3e50;
+        transform-origin: bottom right;
+        transition: transform 0.3s ease-out;
+    }
+
+    .read-more:hover:after {
+        transform: scaleX(1);
+        transform-origin: bottom left;
+    }
+
+    .badge {
+        font-size: 0.8rem;
+        font-weight: 400;
+        padding: 0.35em 0.65em;
+        background-color: #f8f9fa !important;
+    }
+
+    .btn-outline-dark:hover {
+        background-color: #2c3e50;
+        color: white;
+    }
+
+    .position-relative {
+        position: relative;
+    }
+
+    #filterCollapse {
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 0.5rem;
+    }
+    
+    .list-group-item.active {
+        background-color: #2c3e50;
+        border-color: #2c3e50;
+    }
+    
+    .card-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6c757d;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Dışarı tıklandığında kapat
+    document.addEventListener('click', function(event) {
+        const filterButton = document.getElementById('filterButton');
+        const filterCollapse = document.getElementById('filterCollapse');
+        
+        const isClickInside = filterButton.contains(event.target) || 
+                            (filterCollapse && filterCollapse.contains(event.target));
+        
+        if (!isClickInside && filterCollapse.classList.contains('show')) {
+            const bsCollapse = new bootstrap.Collapse(filterCollapse, {
+                toggle: true
+            });
+            bsCollapse.hide();
+        }
+    });
+});
+</script>
+{% endblock %}

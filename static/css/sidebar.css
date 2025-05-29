@@ -1,0 +1,296 @@
+:root {
+  --primary: #2a9d8f;
+  --primary-hover: #21867a;
+  --bg-light: #ffffff;
+  --bg-dark: #0f172a;
+  --text-light: #f8fafc;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+  --border-dark: #1e293b;
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 60px;
+  --transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+
+/* BODY & LAYOUT */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar-nature {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: var(--sidebar-width);
+  padding: 24px 0 70px; /* toggle buton için alt boşluk */
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-right: 1px solid var(--border-light);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.05);
+  transition: width 0.4s ease;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* Sidebar daraltılmış hali (kapalı) */
+.sidebar-nature.closed {
+  width: var(--sidebar-collapsed-width);
+}
+
+/* PROFILE SECTION */
+.profile-nature {
+  text-align: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+  padding: 0 16px 16px;
+  transition: opacity 0.3s ease;
+}
+
+/* Profil adı ve rol kapalı sidebar da gizlenir */
+.sidebar-nature.closed .profile-name-nature,
+.sidebar-nature.closed .profile-role-nature {
+  display: none;
+}
+
+/* Avatar boyutu küçülür */
+.avatar-nature {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 12px;
+  border: 0px solid var(--primary);
+  box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.sidebar-nature.closed .avatar-nature {
+  width: 40px;
+  height: 40px;
+}
+
+/* Profile name */
+.profile-name-nature {
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-dark);
+  margin-bottom: 4px;
+}
+
+/* Profile role */
+.profile-role-nature {
+  font-size: 14px;
+  color: var(--primary);
+  font-weight: 500;
+  background: rgba(42, 157, 143, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+/* NAVIGATION */
+.nav-section-nature {
+  padding: 0 8px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.nav-links-nature {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-link-nature {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 15px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sadece ikon göster: metin gizle */
+.sidebar-nature.closed .nav-link-nature span.link-text {
+  display: none;
+}
+
+/* İkon ayarı */
+.nav-link-nature i,
+.nav-link-nature svg {
+  margin-right: 12px;
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+/* Hover & active */
+.nav-link-nature:hover {
+  background: rgba(42, 157, 143, 0.1);
+  color: var(--primary);
+}
+
+.nav-link-nature.active {
+  background: rgba(42, 157, 143, 0.15);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* THEME TOGGLE */
+.theme-toggle-nature {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin: 16px;
+  border-radius: 8px;
+  background: rgba(42, 157, 143, 0.05);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.theme-toggle-nature:hover {
+  background: rgba(42, 157, 143, 0.1);
+}
+
+.theme-toggle-text-nature {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+/* Sidebar kapalıyken theme toggle yazısı gizlensin */
+.sidebar-nature.closed .theme-toggle-text-nature {
+  display: none;
+}
+
+.theme-icon-nature {
+  font-size: 18px;
+  color: var(--text-dark);
+}
+
+/* TOGGLE BUTTON - Sidebar açma kapama butonu */
+.toggle-sidebar-btn-nature {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.15);
+  transition: background-color 0.3s ease;
+  z-index: 1102;
+}
+
+.toggle-sidebar-btn-nature:hover {
+  background-color: var(--primary-hover);
+}
+
+/* MAIN CONTENT */
+.main-content {
+  margin-left: var(--sidebar-width);
+  padding: 24px;
+  flex-grow: 1;
+  transition: margin-left 0.4s ease;
+}
+
+/* Sidebar kapalıyken içerik sola kayar */
+.sidebar-nature.closed ~ .main-content {
+  margin-left: var(--sidebar-collapsed-width);
+}
+
+/* RESPONSIVE */
+
+/* Mobilde sidebar gizli, toggle buton sabit */
+@media (max-width: 768px) {
+  .sidebar-nature {
+    /* transform: translateX(-100%);  --> kaldır */
+    width: var(--sidebar-collapsed-width) !important; /* küçük hali */
+  }
+  .sidebar-nature.active {
+    width: var(--sidebar-width) !important; /* aktifse tam genişlik */
+  }
+
+  /* Toggle butonu sabit kalır */
+  .toggle-sidebar-btn-nature {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  /* İçerik margin azalt */
+  .main-content {
+    margin-left: var(--sidebar-collapsed-width) !important;
+  }
+
+  /* overlay ve body.sidebar-active kısımlarını kaldır veya devre dışı bırak */
+  .overlay {
+    display: none !important;
+  }
+}
+
+  /* Eğer sidebar açık değilse içerik arka planda koyu overlay */
+  body.sidebar-active .overlay {
+    display: block;
+  }
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+  }
+}
+
+/* DARK MODE ÖRNEĞİ */
+body.dark-mode {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
+body.dark-mode .sidebar-nature {
+  background: rgba(15, 23, 42, 0.95);
+  border-right: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-light);
+}
+
+body.dark-mode .nav-link-nature {
+  color: var(--text-light);
+}
+
+body.dark-mode .nav-link-nature i {
+  color: var(--primary);
+}
+
+body.dark-mode .theme-toggle-nature {
+  background: rgba(42, 157, 143, 0.1);
+}
+
+body.dark-mode .toggle-sidebar-btn-nature {
+  background-color: var(--primary);
+  color: white;
+}
+
