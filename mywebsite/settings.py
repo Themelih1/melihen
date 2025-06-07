@@ -257,12 +257,11 @@ LOGGING = {
 }
 
 CSRF_TRUSTED_ORIGINS = [
-    'http://0.0.0.0:8000',
-    'https://localhost:8000',
-    'https://localhost:8001',
-    'https://enmelih.onrender.com',
-    'https://enmelih.com',
+    'https://melihen.onrender.com',
+    'https://melihen.com',
+    'https://www.melihen.com',
 ]
+
 
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
