@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject }}</title>
+    <style type="text/css">
+        /* Base Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f7;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1f2937;
+            line-height: 1.5;
+        }
+        
+        /* Email Container */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        
+        /* Header */
+        .header {
+            padding: 24px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .brand-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4f46e5;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        
+        /* Content */
+        .content {
+            padding: 24px;
+        }
+        
+        /* Footer */
+        .footer {
+            padding: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #4f46e5;
+            color: #ffffff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        /* Responsive */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100%;
+            }
+            .content, .header, .footer {
+                padding: 16px;
+            }
+            .brand-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body style="margin:0;padding:0;">
+    <!--[if (gte mso 9)|(IE)]>
+    <table align="center" border="0" cellspacing="0" cellpadding="0" width="600">
+    <tr>
+    <td>
+    <![endif]-->
+    
+    <div class="email-container" style="max-width:600px;margin:0 auto;">
+        <!-- Header Section with Text Logo -->
+        <div class="header" style="padding:24px;text-align:center;border-bottom:1px solid #e5e7eb;">
+            <a href="{{ website_url|default:'https://enmelih.com' }}" 
+               class="brand-title" 
+               style="font-size:28px;font-weight:700;color:#4f46e5;text-decoration:none;letter-spacing:-0.5px;">
+               enmelih.com
+            </a>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="content" style="padding:24px;">
+            {% block content %}{% endblock %}
+        </div>
+        
+        <!-- Footer Section -->
+        <div class="footer" style="padding:24px;text-align:center;font-size:13px;color:#6b7280;border-top:1px solid #e5e7eb;">
+            <p style="margin:0 0 10px 0;">
+                <a href="{{ website_url|default:'https://enmelih.com' }}" style="color:#4f46e5;text-decoration:none;">Web Sitemiz</a> | 
+                <a href="{{ contact_url }}" style="color:#4f46e5;text-decoration:none;">İletişim</a> | 
+                <a href="{{ privacy_url }}" style="color:#4f46e5;text-decoration:none;">Gizlilik Politikası</a>
+            </p>
+            <p style="margin:0 0 10px 0;">© {% now "Y" %} enmelih.com. Tüm hakları saklıdır.</p>
+            <p style="margin:0;">
+                <small style="font-size:11px;">
+                    Bu e-postayı almak istemiyorsanız <a href="{{ unsubscribe_url }}" style="color:#4f46e5;text-decoration:none;">abonelikten çıkın</a>.
+                </small>
+            </p>
+        </div>
+    </div>
+    
+    <!--[if (gte mso 9)|(IE)]>
+    </td>
+    </tr>
+    </table>
+    <![endif]-->
+</body>
+</html>

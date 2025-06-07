@@ -9,30 +9,38 @@
         height: 40px;
         object-fit: cover;
     }
+
     .avatar-sm {
         width: 20px;
         height: 20px;
         object-fit: cover;
     }
+
     .reply-item {
-        margin-left: 2rem !important;
+        margin-left: 3rem;
+        border-left: 2px solid #dee2e6;
+        padding-left: 1rem;
     }
+
     .captcha {
         margin: 15px 0;
         padding: 10px;
         background: #f8f9fa;
-        border-radius: 4px;
+        border-radius: 0px;
     }
+
     .captcha img {
         margin-bottom: 10px;
         border: 1px solid #dee2e6;
     }
+
     .featured-image {
         width: 100%;
         overflow: hidden;
         position: relative;
         transition: height 0.3s ease;
     }
+
     .full-width-image {
         width: 100%;
         height: 500px;
@@ -40,14 +48,28 @@
         object-position: center;
         transition: height 0.3s ease;
     }
+
     @media (max-width: 768px) {
         .full-width-image {
             height: 300px;
         }
     }
+
     .reply-form {
         transition: all 0.3s ease;
         overflow: hidden;
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 5px;
+    }
+
+    .comment-item {
+        position: relative;
+    }
+
+    .reply-btn {
+        margin-top: 0.5rem;
     }
 </style>
 {% endblock %}
@@ -72,7 +94,8 @@
                     <h1 class="card-title mb-4">{{ post.title }}</h1>
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <div class="author-info">
-                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle me-2 avatar-md" alt="Author">
+                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle me-2 avatar-md"
+                                alt="Author">
                             <span class="fw-bold">{{ post.author }}</span>
                         </div>
                         <small class="text-muted">
@@ -80,7 +103,7 @@
                         </small>
                     </div>
                     <div class="content">
-                        {{ post.content|safe }}
+                        {{ post.content|safe}}
                     </div>
                 </div>
             </div>
@@ -89,16 +112,21 @@
             <div class="comments-section mt-5">
                 <h3 class="mb-4">💬 Yorumlar ({{ comments.count }})</h3>
 
+                {% if comments.count == 0 %}
+                <div class="alert alert-info">
+                    📭 İlk yorumu sen yap!
+                </div>
+                {% endif %}
+
                 <div class="comment-list">
                     {% for comment in comments %}
                     <div class="comment-item bg-white p-4 rounded-3 shadow-sm mb-3">
                         <div class="d-flex align-items-center gap-3 mb-3">
-                            <img src="{% static 'images/default-avatar.png' %}" 
-                                 class="rounded-circle border avatar-md" 
-                                 alt="{{ comment.first_name }}">
+                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle border avatar-md"
+                                alt="{{ comment.name }}">
                             <div>
                                 <h6 class="mb-0 fw-bold">
-                                    {{ comment.first_name }} {{ comment.last_name }}
+                                    {{ comment.name }} <!-- Direkt formdan gelen name'i göster -->
                                 </h6>
                                 <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
                             </div>
@@ -108,8 +136,7 @@
                         </div>
 
                         <!-- Yanıt butonu -->
-                        <button class="btn btn-sm btn-outline-secondary reply-btn" 
-                                onclick="toggleReplyForm('{{ comment.id }}')">
+                        <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="{{ comment.id }}">
                             <i class="fas fa-reply me-1"></i>Yanıtla
                         </button>
 
@@ -119,36 +146,44 @@
                                 {% csrf_token %}
                                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
                                 <div class="mb-3">
-                                    <label for="id_first_name_{{ comment.id }}" class="form-label">Adınız</label>
-                                    <input type="text" name="first_name" class="form-control" id="id_first_name_{{ comment.id }}" required>
+                                    <label for="id_name_{{ comment.id }}" class="form-label">Adınız</label>
+                                    <input type="text" name="name" class="form-control" id="id_name_{{ comment.id }}"
+                                        required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="id_last_name_{{ comment.id }}" class="form-label">Soyadınız</label>
-                                    <input type="text" name="last_name" class="form-control" id="id_last_name_{{ comment.id }}" required>
+                                    <label for="id_email_{{ comment.id }}" class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" id="id_email_{{ comment.id }}"
+                                        required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="id_content_{{ comment.id }}" class="form-label">Yanıtınız</label>
-                                    <textarea name="content" class="form-control" id="id_content_{{ comment.id }}" rows="3" required></textarea>
+                                    <textarea name="content" class="form-control" id="id_content_{{ comment.id }}"
+                                        rows="3" required></textarea>
                                 </div>
                                 <div class="mb-3 captcha">
-                                    {{ form.captcha }}  <!-- CAPTCHA -->
+                                    {{ form.captcha }}
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-paper-plane me-2"></i>Yanıt Gönder
-                                </button>
+                                <div class="d-flex justify-content-end gap-2">
+                                    <button type="button" class="btn btn-outline-secondary cancel-reply"
+                                        data-comment-id="{{ comment.id }}">
+                                        İptal
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Yanıt Gönder
+                                    </button>
+                                </div>
                             </form>
                         </div>
 
                         <!-- Yanıtlar -->
                         {% for reply in comment.replies.all %}
-                        <div class="reply-item ms-5 mt-3 p-3 bg-light rounded-3">
+                        <div class="reply-item mt-3 p-3">
                             <div class="d-flex align-items-center gap-3 mb-2">
-                                <img src="{% static 'images/default-avatar.png' %}" 
-                                     class="rounded-circle border avatar-sm" 
-                                     alt="{{ reply.first_name }}">
+                                <img src="{% static 'images/default-avatar.png' %}"
+                                    class="rounded-circle border avatar-sm" alt="{{ reply.name }}">
                                 <div>
                                     <h6 class="mb-0 fw-bold">
-                                        {{ reply.first_name }} {{ reply.last_name }}
+                                        {{ reply.name }}
                                     </h6>
                                     <small class="text-muted">{{ reply.created_at|naturaltime }}</small>
                                 </div>
@@ -159,29 +194,44 @@
                         </div>
                         {% endfor %}
                     </div>
-                    {% empty %}
-                    <div class="alert alert-info">
-                        📭 İlk yorumu sen yap!
-                    </div>
                     {% endfor %}
                 </div>
 
-                <!-- Yorum formu -->
+                <!-- Ana yorum formu -->
                 <div class="comment-form mt-5 p-4 bg-light rounded-3">
                     <h4 class="mb-4">✏️ Yorum Yaz</h4>
                     <form method="POST" action="{% url 'core:post_detail' post.slug %}">
                         {% csrf_token %}
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
                         <div class="mb-3">
-                            <label for="id_first_name" class="form-label">Adınız</label>
-                            <input type="text" name="first_name" class="form-control" id="id_first_name" required>
+                            <label for="id_name" class="form-label">Adınız</label>
+                            <input type="text" name="name" class="form-control" id="id_name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="id_last_name" class="form-label">Soyadınız</label>
-                            <input type="text" name="last_name" class="form-control" id="id_last_name" required>
+                            <label for="id_email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="id_email" required>
                         </div>
                         <div class="mb-3">
                             <label for="id_content" class="form-label">Yorumunuz</label>
                             <textarea name="content" class="form-control" id="id_content" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="subscribe_newsletter" class="form-check-input"
+                                id="id_subscribe_newsletter">
+                            <label class="form-check-label" for="id_subscribe_newsletter">
+                                Yeni gönderilerden e-posta ile haberdar olmak istiyorum
+                            </label>
                         </div>
                         <div class="mb-3 captcha">
                             {{ form.captcha }}
@@ -191,10 +241,6 @@
                         </button>
                     </form>
                 </div>
-            </div>
-
-        </div>
-    </div>
 </article>
 
 {% endblock %}
@@ -202,7 +248,7 @@
 {% block extra_js %}
 <script>
     // Resim boyutunu scroll ile küçült
-    window.addEventListener('scroll', function() {
+    window.addEventListener('scroll', function () {
         const headerImage = document.getElementById('header-image');
         if (!headerImage) return;
         const scrollPosition = window.scrollY;
@@ -210,15 +256,40 @@
         headerImage.style.height = `${newHeight}px`;
     });
 
-    // Yanıt formunu aç/kapa
-    function toggleReplyForm(commentId) {
-        const form = document.getElementById('reply-form-' + commentId);
-        if (!form) return;
-        if (form.style.display === 'none' || form.style.display === '') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
-        }
-    }
+    // Yanıt formu yönetimi
+    document.addEventListener('DOMContentLoaded', function () {
+        // Yanıt butonları
+        document.querySelectorAll('.reply-btn').forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                const commentId = this.getAttribute('data-comment-id');
+                const form = document.getElementById('reply-form-' + commentId);
+
+                // Diğer tüm yanıt formlarını kapat
+                document.querySelectorAll('.reply-form').forEach(f => {
+                    f.style.display = 'none';
+                });
+
+                // Mevcut formu aç/kapa
+                if (form) {
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                    if (form.style.display === 'block') {
+                        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            });
+        });
+
+        // İptal butonları
+        document.querySelectorAll('.cancel-reply').forEach(button => {
+            button.addEventListener('click', function () {
+                const commentId = this.getAttribute('data-comment-id');
+                const form = document.getElementById('reply-form-' + commentId);
+                if (form) {
+                    form.style.display = 'none';
+                }
+            });
+        });
+    });
 </script>
 {% endblock %}

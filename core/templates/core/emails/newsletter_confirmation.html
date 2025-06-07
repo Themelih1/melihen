@@ -1,0 +1,53 @@
+{% extends 'core/base_email.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; font-family: 'Georgia', serif; padding: 20px; color: #444; line-height: 1.6;">
+    <!-- Kişisel Başlık -->
+    <div style="text-align: center; padding: 30px 0 20px; border-bottom: 1px solid #f0e6d2;">
+        <div style="margin-bottom: 20px;">
+            <svg style="width: 60px; height: 60px; color: #e67e22;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+        </div>
+        <h1 style="color: #8e44ad; font-size: 26px; font-weight: normal; margin-bottom: 10px; font-style: italic;">Hoş Geldiniz {{ name|default:"Değerli Dostumuz" }}!</h1>
+        <p style="color: #7f8c8d; font-size: 17px; margin: 0;">Ailemize katıldığınız için çok mutluyuz ❤️</p>
+    </div>
+
+    <!-- Samimi İçerik -->
+    <div style="padding: 30px 20px; background-color: #fff9f0; border-radius: 5px; margin: 25px 0;">
+        <p style="font-size: 16px; margin-bottom: 20px;">
+            "Küçük bir tohum gibi attığınız bu adım, büyük bir dostluğun başlangıcı olsun..."
+        </p>
+        
+        <div style="background-color: white; padding: 20px; border-left: 4px solid #e67e22; margin-bottom: 25px;">
+            <p style="font-size: 15px; margin: 0; color: #555;">
+                Artık sizin için özenle hazırladığımız:<br>
+                ✨ İlham verici hikayeler<br>
+                ✨ Özel davetler<br>
+                ✨ Sadece abonelerimize özel sürprizler<br>
+                paylaşacağız.
+            </p>
+        </div>
+
+        <p style="font-size: 16px;">
+            İlk bültenimiz en kısa zamanda <strong>{{ email }}</strong> adresinize ulaşacak.
+        </p>
+    </div>
+
+    <!-- Kişisel İmza -->
+    <div style="text-align: center; padding: 20px 0; border-top: 1px solid #f0e6d2;">
+        <div style="display: inline-block; text-align: left;">
+            <p style="margin: 5px 0; font-size: 15px;">Sevgilerimle,</p>
+            <p style="margin: 5px 0; font-size: 17px; color: #8e44ad; font-weight: bold;">{{ company_name }} Ekibi</p>
+            <img src="https://example.com/signature.png" alt="İmza" style="height: 40px; margin-top: 10px;">
+        </div>
+    </div>
+
+    <!-- Abonelik Yönetimi -->
+    <div style="text-align: center; margin-top: 20px; color: #95a5a6; font-size: 13px; padding-top: 15px; border-top: 1px dashed #ddd;">
+        <p style="margin-bottom: 10px;">Bizi tercih ettiğiniz için teşekkür ederiz.</p>
+        <a href="{{ unsubscribe_link }}" style="color: #e74c3c; text-decoration: none; font-size: 12px;">Abonelikten çıkmak için tıklayın</a>
+        <p style="margin-top: 15px; font-size: 12px;">{{ melihen.com }}</p>
+    </div>
+</div>
+{% endblock %}

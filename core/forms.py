@@ -3,47 +3,46 @@ from .models import Comment, BlogPost  # FlatPage çıkarıldı çünkü Django'
 from tinymce.widgets import TinyMCE  # type: ignore
 from django.contrib.flatpages.models import FlatPage  # Django'nun kendi FlatPage modelini içe aktarıyoruz
 from captcha.fields import CaptchaField #type: ignore
+from django.utils.translation import gettext_lazy as _
+
 
 
 
 class CommentForm(forms.ModelForm):
-    """Form for adding comments."""
-    
-    first_name = forms.CharField(
-        max_length=100,
-        required=True,
-        label="First Name",
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your first name'})
-    )
-    last_name = forms.CharField(
-        max_length=100,
-        required=True,
-        label="Last Name",
-        widget=forms.TextInput(attrs={'placeholder': 'Enter your last name'})
-    )
-    content = forms.CharField(
-        widget=forms.Textarea(attrs={'cols': 80, 'rows': 10}),
-        label="Comment",
-        required=True
-    )
-    captcha = CaptchaField(label='Güvenlik Kodu')   
-
-    parent_id = forms.IntegerField(
+    subscribe_newsletter = forms.BooleanField(
         required=False,
-        widget=forms.HiddenInput()
+        initial=False,
+        label=_('Subscribe to newsletter'),
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
     )
+    captcha = CaptchaField()  # captcha'yı burada form alanı olarak ekliyoruz
 
     class Meta:
         model = Comment
-        fields = ['first_name', 'last_name', 'content', 'captcha', 'parent_id']
+        fields = ['name', 'email', 'content']  # SADECE modeldeki alanlar!
+        widgets = {
+            'name': forms.TextInput(attrs={'placeholder': _('Your name')}),
+            'email': forms.EmailInput(attrs={'placeholder': _('Your email')}),
+            'content': forms.Textarea(attrs={'rows': 5, 'placeholder': _('Your comment')}),
+        }
 
-
-class BlogPostForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['captcha'].label = _('Security Code')
+        
+class BlogPostAdminForm(forms.ModelForm):
     class Meta:
         model = BlogPost
-        fields = '__all__'  # '__all__' özel bir değer olarak kullanılmalı
+        fields = '__all__'  # veya slug'ı açıkça ekle: ['title', 'slug', ...]
         widgets = {
-            'content': TinyMCE(attrs={'cols': 80, 'rows': 30}),
+            'content': TinyMCE(attrs={
+                'cols': 80, 
+                'rows': 30,
+                'plugins': 'link image code',
+                'toolbar': 'undo redo | styleselect | bold italic | alignleft aligncenter alignright | link image | code',
+            }),
+            'excerpt': forms.Textarea(attrs={'rows': 3}),
+            'meta_description': forms.Textarea(attrs={'rows': 2}),
         }
 
 

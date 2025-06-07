@@ -1,10 +1,12 @@
+Django==5.2.2
+gunicorn==23.0.0
+setuptools==80.9.0
 asgiref==3.8.1
 certifi==2025.1.31
 cffi==1.17.1
 charset-normalizer==3.4.1
 crispy-bootstrap5==2024.10
 cryptography==44.0.1
-Django==5.1.6
 django-allauth==65.4.1
 django-axes==7.0.2
 django-ckeditor-5==0.2.17
@@ -26,3 +28,8 @@ requests-oauthlib==2.0.0
 sqlparse==0.5.3
 tzdata==2025.1
 urllib3==2.3.0
+whitenoise==6.9.0
+cloudinary==1.40.0
+django-cloudinary-storage==0.3.0
+dj-database-url==1.0.0
+django-csp==4.0

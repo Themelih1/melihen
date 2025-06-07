@@ -1,0 +1,40 @@
+{% extends 'core/base_email.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; font-family: 'Helvetica Neue', sans-serif; padding: 40px 30px; background-color: #ffffff; color: #333; line-height: 1.6; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+
+    <!-- Başlık -->
+    <h2 style="text-align: center; font-weight: 600; font-size: 24px; color: #2c3e50; margin-bottom: 10px;">
+        Hoş geldin, {{ name }} 👋
+    </h2>
+    <p style="text-align: center; font-size: 16px; color: #7f8c8d; margin-bottom: 30px;">
+        Ailemize katıldığın için çok mutluyuz!
+    </p>
+
+    <!-- İçerik Kutusu -->
+    <div style="background-color: #f9f9f9; padding: 25px 20px; border-radius: 6px; margin-bottom: 30px;">
+        <p style="font-size: 15px; margin-bottom: 16px;">
+            Seni ilham veren içerikler, özel bültenler ve sürprizlerle dolu bir yolculuk bekliyor. ✨
+        </p>
+
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="margin-bottom: 10px;">✅ İlham verici hikayeler</li>
+            <li style="margin-bottom: 10px;">✅ Sadece üyelere özel içerikler</li>
+            <li style="margin-bottom: 10px;">✅ Özel davetler ve duyurular</li>
+        </ul>
+
+        <p style="margin-top: 20px; font-size: 15px;">
+            İlk e-postamızı yakında <strong>{{ email }}</strong> adresine göndereceğiz.
+        </p>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top: 40px; text-align: center; font-size: 12px; color: #aaa; border-top: 1px solid #eee; padding-top: 20px;">
+        <p style="margin: 0 0 10px;">Bu e-posta {{ company_name }} tarafından gönderildi.</p>
+        <p style="margin: 0 0 10px;">{{ company_address }}</p>
+        <a href="{{ unsubscribe_link }}" style="color: #e74c3c; text-decoration: none;">
+            Abonelikten çıkmak için buraya tıklayın
+        </a>
+    </div>
+</div>
+{% endblock %}

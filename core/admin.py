@@ -2,7 +2,8 @@ from django.contrib import admin
 from django import forms
 from django.utils.html import format_html
 from tinymce.widgets import TinyMCE
-from .models import BlogPost, Category, Tag, Comment, NewsletterSubscriber, Profile, Project, BlogPostCategory, BlogPostTag
+from django.conf import settings
+from .models import BlogPost, Category, Tag, Comment, NewsletterSubscription, Profile, Project, BlogPostCategory, BlogPostTag
 
 # TinyMCE için özel formlar
 class BlogPostAdminForm(forms.ModelForm):
@@ -71,26 +72,27 @@ class BlogPostAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'status', 'date_posted', 'reading_time', 'get_categories', 'comment_count')
     list_filter = ('status', 'date_posted', 'categories', 'tags')
     search_fields = ('title', 'content', 'excerpt')
-    prepopulated_fields = {'slug': ('title',)}
     raw_id_fields = ('author',)
     date_hierarchy = 'date_posted'
-    readonly_fields = ('reading_time', 'updated_at')
+    readonly_fields = ('reading_time', 'updated_at', 'image_preview')
     fieldsets = (
-        (None, {
-            'fields': ('title', 'slug', 'author', 'status')
-        }),
-        ('İçerik', {
-            'fields': ('image', 'content', 'excerpt')
-        }),
-        ('SEO', {
-            'classes': ('collapse',),
-            'fields': ('meta_title', 'meta_description'),
-        }),
-        ('Tarihler', {
-            'classes': ('collapse',),
-            'fields': ('date_posted', 'updated_at', 'reading_time'),
-        }),
-    )
+    (None, {
+        'fields': ('title', 'author', 'status')  # slug kaldırıldı
+    }),
+    ('İçerik', {
+        'fields': ('image', 'image_preview', 'content', 'excerpt')
+    }),
+    ('SEO', {
+        'classes': ('collapse',),
+        'fields': ('meta_title', 'meta_description'),
+    }),
+    ('Tarihler', {
+        'classes': ('collapse',),
+        'fields': ('date_posted', 'updated_at', 'reading_time'),
+    }),
+)
+
+    
 
     def get_categories(self, obj):
         return ", ".join([c.name for c in obj.categories.all()])
@@ -99,6 +101,12 @@ class BlogPostAdmin(admin.ModelAdmin):
     def comment_count(self, obj):
         return obj.comments.count()
     comment_count.short_description = 'Yorumlar'
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 200px; max-width: 200px;" />', obj.image.url)
+        return "-"
+    image_preview.short_description = 'Görsel Önizleme'
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -131,10 +139,9 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'color_preview', 'is_active')
+    list_display = ('name', 'color_preview', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('name', 'description')
-    prepopulated_fields = {'slug': ('name',)}
     readonly_fields = ('color_preview',)
     fieldsets = (
         (None, {
@@ -214,36 +221,51 @@ class CommentAdmin(admin.ModelAdmin):
         return obj.content[:50] + '...' if len(obj.content) > 50 else obj.content
     content_preview.short_description = 'Yorum'
 
-@admin.register(NewsletterSubscriber)
-class NewsletterSubscriberAdmin(admin.ModelAdmin):
-    list_display = ('email', 'is_active', 'is_verified', 'subscribed_at')
-    list_filter = ('is_active', 'is_verified', 'subscribed_at')
+@admin.register(NewsletterSubscription)
+class NewsletterSubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('email', 'is_active', 'is_verified', 'subscribed_at', 'subscription_source')
+    list_filter = ('is_active', 'is_verified', 'subscribed_at', 'subscription_source')
     search_fields = ('email',)
-    readonly_fields = ('subscribed_at', 'token')
+    readonly_fields = ('token', 'subscribed_at', 'updated_at')
     fieldsets = (
         (None, {
-            'fields': ('email', 'is_active', 'is_verified')
+            'fields': ('email', 'is_active', 'is_verified', 'subscription_source')
         }),
         ('Meta', {
-            'fields': ('token', 'subscribed_at')
+            'fields': ('token', 'subscribed_at', 'updated_at')
         }),
     )
+    
+    actions = ['send_test_newsletter']
+
+    def send_test_newsletter(self, request, queryset):
+        from django.core.mail import send_mail
+        for subscription in queryset:
+            send_mail(
+                'Test Newsletter',
+                'This is a test newsletter email.',
+                settings.DEFAULT_FROM_EMAIL,
+                [subscription.email],
+                fail_silently=False,
+            )
+        self.message_user(request, "Test emails sent successfully.")
+    send_test_newsletter.short_description = "Send test newsletter to selected subscribers"
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
     form = ProjectAdminForm
-    list_display = ('title', 'author', 'status', 'is_featured', 'date_posted', 'technologies_preview')
-    list_filter = ('status', 'is_featured', 'tags', 'date_posted')
+    list_display = ('title', 'author', 'status', 'is_featured', 'created_at', 'technologies_preview')
+    list_filter = ('status', 'is_featured', 'tags', 'created_at')
     search_fields = ('title', 'description', 'technologies')
     prepopulated_fields = {'slug': ('title',)}
     raw_id_fields = ('author', 'tags')
-    readonly_fields = ('last_updated', 'technologies_list')
+    readonly_fields = ('created_at', 'updated_at', 'technologies_list', 'image_preview')
     fieldsets = (
         (None, {
             'fields': ('title', 'slug', 'author', 'status', 'is_featured')
         }),
         ('İçerik', {
-            'fields': ('image', 'short_description', 'description')
+            'fields': ('image', 'image_preview', 'short_description', 'description')
         }),
         ('Teknolojiler', {
             'fields': ('technologies', 'technologies_list', 'tags')
@@ -252,10 +274,9 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('url', 'repository_url')
         }),
         ('Tarihler', {
-            'fields': ('start_date', 'end_date', 'date_posted', 'last_updated')
+            'fields': ('start_date', 'end_date', 'created_at', 'updated_at')
         }),
     )
-
     def technologies_preview(self, obj):
         return ", ".join(obj.get_technologies_list()[:3]) + ('...' if len(obj.get_technologies_list()) > 3 else '')
     technologies_preview.short_description = 'Teknolojiler'
@@ -263,3 +284,9 @@ class ProjectAdmin(admin.ModelAdmin):
     def technologies_list(self, obj):
         return format_html("<br>".join(obj.get_technologies_list()))
     technologies_list.short_description = 'Teknoloji Listesi'
+    
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" style="max-height: 200px; max-width: 200px;" />', obj.image.url)
+        return "-"
+    image_preview.short_description = 'Görsel Önizleme'

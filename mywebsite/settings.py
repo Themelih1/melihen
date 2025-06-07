@@ -12,13 +12,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
-
+import dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -29,13 +28,12 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "insecure-default-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
 
-
-
-
-
+# DATABASES = {
+#     'default': dj_database_url.config(default=os.getenv('DATABASE_URL'))
+# }
 
 # Application definition
 
@@ -63,47 +61,50 @@ INSTALLED_APPS = [
     'core.apps.CoreConfig',
     'tinymce',
     'captcha',
-    'django.contrib.flatpages',  # Flatpages uygulamasını ekleyin
+    'django.contrib.flatpages',
+    'cloudinary',
+    'cloudinary_storage',
     
     
 
 ]
 
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+# Cloudinary storage for media files
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # E-posta doğrulaması zorunlu
-ACCOUNT_EMAIL_REQUIRED = True  # Kullanıcı kaydı sırasında e-posta zorunlu
-LOGIN_REDIRECT_URL = '/'  # Giriş yapıldıktan sonra yönlendirilecek URL
+ACCOUNT_EMAIL_REQUIRED = True  # E-posta kayıt sırasında zorunlu
+LOGIN_REDIRECT_URL = '/'  # Giriş sonrası yönlendirme
 
-
-TAGGIT_CASE_INSENSITIVE = True  # Etiketlerin büyük/küçük harf duyarlılığını kapat
-
-
-
+TAGGIT_CASE_INSENSITIVE = True  # Etiketlerde büyük/küçük harf duyarsızlığı
 
 AXES_LOCKOUT_TEMPLATE = 'admin/lockout.html'  # Kilitlenme şablonu
-AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = True  # Kilitlenme sırasında başarısız girişlerde süreyi sıfırla
-
-
+AXES_RESET_COOL_OFF_ON_FAILURE_DURING_LOCKOUT = True
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # Yerel bellek cache
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
 
-
-AXES_FAILURE_LIMIT = 50  # Kaç başarısız denemeden sonra kilitlenecek
-AXES_COOLOFF_TIME = 0  # Kilidin ne kadar süreyle aktif kalacağı (saat cinsinden)
-AXES_RESET_ON_SUCCESS = True  # Başarılı girişte kilidi sıfırla
-
+AXES_FAILURE_LIMIT = 50
+AXES_COOLOFF_TIME = 0
+AXES_RESET_ON_SUCCESS = True
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -112,30 +113,30 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
     'allauth.account.middleware.AccountMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',  # Flatpages middleware'i
-    
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'core.middleware.TrafficLoggerMiddleware',  # Trafik loglama middleware'i
+    'csp.middleware.CSPMiddleware',
+
 ]
+
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_IMG_SRC = ("'self'", "data:", "https://res.cloudinary.com", "https://images.unsplash.com")
+
 
 SITE_ID = 1
 
-
 AUTHENTICATION_BACKENDS = [
-    'axes.backends.AxesStandaloneBackend',  # Axes backend'i
-    'django.contrib.auth.backends.ModelBackend',  # Django'nun varsayılan backend'i
-    'allauth.account.auth_backends.AuthenticationBackend',  # Allauth backend'i
+    'axes.backends.AxesStandaloneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
-
-
-
 
 ROOT_URLCONF = 'mywebsite.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR / 'templates',
-        ],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -150,77 +151,63 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'mywebsite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600)
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstatic sonrası dosyaların toplanacağı yer
 
+if (BASE_DIR / 'static').exists():
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    STATICFILES_DIRS = [
+    BASE_DIR / 'static',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+if DEBUG:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    MEDIA_URL = None
+    MEDIA_ROOT = None
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# settings.py
-# Security Headers
+# Security headers
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
-
-#tinyMCE Ayarları
+# TinyMCE Settings
 
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,
@@ -241,45 +228,17 @@ TINYMCE_DEFAULT_CONFIG = {
     ''',
 }
 
-# TINYMCE Ayarları
+# CAPTCHA Settings
+
+CAPTCHA_FONT_SIZE = 30
+CAPTCHA_IMAGE_SIZE = (120, 50)
+CAPTCHA_LENGTH = 4
+CAPTCHA_TIMEOUT = 5
+CAPTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
 
 
+# Logging
 
-
-
-# CAPTCHA Ayarları
-CAPTCHA_FONT_SIZE = 30  # CAPTCHA metin boyutu
-CAPTCHA_IMAGE_SIZE = (120, 50)  # CAPTCHA resim boyutu
-CAPTCHA_LENGTH = 4  # CAPTCHA metin uzunluğu
-CAPTCHA_TIMEOUT = 5  # CAPTCHA'nın geçerlilik süresi (dakika)
-APTCHA_CHALLENGE_FUNCT = 'captcha.helpers.random_char_challenge'
-
-
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'encoding': 'utf-8',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
-
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'https://seninsiten.com']
-
-
-MIDDLEWARE += ['core.middleware.TrafficLoggerMiddleware']
 LOGGING = {
     'version': 1,
     'handlers': {
@@ -297,3 +256,39 @@ LOGGING = {
         },
     },
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://0.0.0.0:8000',
+    'https://localhost:8000',
+    'https://localhost:8001',
+    'https://enmelih.onrender.com',
+    'https://enmelih.com',
+]
+
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+
+
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False 
+
+ADMIN_URL = 'panda/' 
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'Melih\'in Blogu <melih.yilmaz904@gmail.com>'
+SERVER_EMAIL = 'melih.yilmaz904@gmail.com'
+
+
+TEMPLATES[0]['OPTIONS']['context_processors'] += [
+    'core.context_processors.global_settings',
+]

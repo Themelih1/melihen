@@ -3,11 +3,20 @@
 
 {% block content %}
 
+<!-- Preload LCP image -->
+<link rel="preload" href="https://res.cloudinary.com/dqm1exvp6/image/upload/f_webp/v1749304864/nature-bg_lnyovw.jpg" as="image" fetchpriority="high">
 
+<!-- Preconnect to critical third-party origins -->
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Hero Section -->
 <section class="hero-section d-flex align-items-center min-vh-100 position-relative">
-    <!-- Doğa resimli arka plan -->
     <div class="hero-bg position-absolute w-100 h-100">
-        <img src="{% static 'images/nature-bg.jpg' %}" alt="Doğa Arka Plan" class="w-100 h-100 object-fit-cover">
+        <!-- WebP formatında optimize edilmiş resim -->
+        <img src="https://res.cloudinary.com/dqm1exvp6/image/upload/f_webp/v1749304864/nature-bg_lnyovw.jpg"
+            alt="Doğa Arka Plan" class="w-100 h-100 object-fit-cover" width="1920" height="1080" fetchpriority="high" decoding="async">
         <div class="overlay position-absolute w-100 h-100 bg-dark opacity-50"></div>
     </div>
 
@@ -16,70 +25,171 @@
             <div class="col-lg-6 text-white">
                 <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeInDown">Merhaba Ben
                     <br>
-                    <span h2="text-gradient animate__animated animate__fadeIn animate__delay-1s"> </span>
-                    <span class="text-gradient animate__animated animate__fadeIn animate__delay-2s">
-                        Melih </span>
+                    <span class="text-gradient animate__animated animate__fadeIn animate__delay-1s">Melih</span>
                 </h1>
-                <p class="lead mb-4 animate__animated animate__fadeIn animate__delay-1s">
-                </p>
                 <div class="d-flex gap-3 animate__animated animate__fadeIn animate__delay-2s">
-                    <a href="{% url 'core:blog_posts' %}"
-                        class="btn btn-primary btn-lg px-4 btn-hover-effect">Blog</a>
+                    <a href="{% url 'core:blog_posts' %}" class="btn btn-primary btn-lg px-4 btn-hover-effect" aria-label="Blog sayfasına git">Blog</a>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    </div>
+
     <!-- Scroll Down İkonu -->
     <div class="scroll-down position-absolute bottom-0 start-50 translate-middle-x mb-4">
-        <a href="#services" class="text-white">
+        <a href="#blog" class="text-white" aria-label="Aşağı kaydır">
             <i class="fas fa-chevron-down fa-2x"></i>
         </a>
     </div>
 </section>
-<!-- Son Yazılar Bölümü -->
-<section class="py-5 bg-light">
+
+<!-- Blog Yazıları Bölümü -->
+<section id="blog" class="py-5 bg-white">
     <div class="container">
         <div class="text-center mb-5">
-            <h2 class="fw-bold">Son Yazılar</h2>
-            <p class="text-muted">En yeni içeriklerime göz atın</p>
+            <h2 class="fw-bold section-title">Son Blog Yazıları</h2>
+            <p class="text-muted section-subtitle">Güncel yazılarımı keşfedin</p>
+            <div class="divider mx-auto my-3"></div>
         </div>
+
         <div class="row g-4">
-            {% for post in posts %}
-            <div class="col-12 col-md-4">
-                <div class="card h-100 shadow-sm border-0">
-                    {% if post.image %}
-                    <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}"
-                        style="height: 180px; object-fit: cover;">
-                    {% else %}
-                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center"
-                        style="height: 180px;">
-                        <i class="fas fa-image fa-2x text-muted"></i>
+            {% for post in posts|slice:":6" %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <a href="{% url 'core:post_detail' post.slug %}" class="text-decoration-none text-dark" aria-label="{{ post.title }}">
+                    <div class="card blog-card h-100 shadow-sm border-0 overflow-hidden">
+                        {% if post.image %}
+                        <div class="blog-image-wrapper position-relative">
+                            <img src="{{ post.image.url }}" class="card-img-top" alt="{{ post.title }}"
+                                style="height: 200px; object-fit: cover; transition: transform 0.5s ease;" width="400" height="200" loading="lazy" decoding="async">
+                            <div
+                                class="blog-overlay position-absolute w-100 h-100 d-flex align-items-center justify-content-center">
+                                <span class="text-white fw-bold">Devamını Oku</span>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="blog-image-placeholder bg-light d-flex align-items-center justify-content-center"
+                            style="height: 200px;">
+                            <i class="fas fa-book-open fa-3x text-muted" aria-hidden="true"></i>
+                        </div>
+                        {% endif %}
+
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                {% if post.categories.exists %}
+                                {% for category in post.categories.all %}
+                                <span class="badge bg-primary me-1">
+                                    {{ category.name }}
+                                </span>
+                                {% endfor %}
+                                {% else %}
+                                <span class="badge bg-secondary">Genel</span>
+                                {% endif %}
+                                <small class="text-muted">{{ post.date_posted|date:"d F Y" }}</small>
+                            </div>
+                            <h3 class="card-title h5">{{ post.title }}</h3>
+                            <p class="card-text text-muted">{{ post.content|striptags|truncatechars:120|safe }}</p>
+                        </div>
+
+                        <div class="card-footer bg-white border-0 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle me-2"
+                                    width="30" height="30" alt="{{ post.author }}" loading="lazy" decoding="async">
+                                <small class="text-muted">{{ post.author }}</small>
+                            </div>
+                            <span class="badge bg-light text-dark">
+                                <i class="far fa-clock me-1" aria-hidden="true"></i>{{ post.reading_time }} dakika
+                            </span>
+                        </div>
                     </div>
-                    {% endif %}
-                    <div class="card-body">
-                        <h5 class="card-title">{{ post.title }}</h5>
-                        <p class="card-text text-muted">{{ post.content|striptags|truncatechars:100|safe}}</p>
-                    </div>
-                    <div class="card-footer bg-white border-0">
-                    </div>
-                </div>
+                </a>
             </div>
             {% endfor %}
         </div>
 
-        <div class="text-center mt-4">
-            <a href="{% url 'core:blog_posts' %}" class="btn btn-outline-secondary btn-hover-effect">
-                Tüm Yazıları Gör <i class="fas fa-arrow-right ms-2"></i>
+        <div class="text-center mt-5">
+            <a href="{% url 'core:blog_posts' %}" class="btn btn-primary btn-lg px-4 btn-hover-effect" aria-label="Tüm blog yazılarını gör">
+                Tüm Yazıları Gör <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i>
             </a>
         </div>
     </div>
 </section>
 
-<!-- Blog Bölümü - Modern Kartlar -->
+<!-- Newsletter Section -->
+<section id="newsletter" class="py-10 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-lg rounded-3 overflow-hidden">
+                    <div class="row g-0">
+                        <div class="col-md-5 bg-primary text-white p-5 d-flex align-items-center">
+                            <div>
+                                <h2 class="fw-bold mb-4">Bültenimize Abone Olun</h2>
+                                <p class="mb-4">En son blog yazılarım ve güncellemeler için e-posta listemize katılın.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-7 bg-white p-5">
+                            <h3 class="fw-bold mb-4 text-center">Ücretsiz Üyelik</h3>
 
-            <!-- Diğer post kartları buraya -->
+                            <!-- Error Message for Privacy Policy -->
+                            <div id="privacyError" class="alert alert-danger d-none mb-4" role="alert">
+                                <i class="fas fa-exclamation-circle me-2" aria-hidden="true"></i>
+                                Lütfen gizlilik politikasını kabul edin
+                            </div>
+
+                            <form id="newsletterForm" method="POST" action="{% url 'core:subscribe_newsletter' %}"
+                                novalidate>
+                                {% csrf_token %}
+
+                                <!-- Name Field -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="subscriberName" name="name"
+                                        placeholder="Adınız" required aria-label="Adınız">
+                                    <label for="subscriberName">
+                                        <i class="fas fa-user me-2" aria-hidden="true"></i>Adınız
+                                    </label>
+                                </div>
+
+                                <!-- Email Field -->
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control" id="subscriberEmail" name="email"
+                                        placeholder="E-posta" required aria-label="E-posta adresiniz">
+                                    <label for="subscriberEmail">
+                                        <i class="fas fa-envelope me-2" aria-hidden="true"></i>E-posta Adresiniz
+                                    </label>
+                                </div>
+
+                                <!-- Honeypot alanı -->
+                                <div style="display:none;">
+                                    <input type="text" name="website">
+                                </div>
+
+                                <!-- Privacy Policy Checkbox -->
+                                <div class="form-check mb-4">
+                                    <input class="form-check-input" type="checkbox" id="privacyAgreement"
+                                        name="privacy_check" required aria-label="Gizlilik politikasını kabul ediyorum">
+                                    <label class="form-check-label small" for="privacyAgreement">
+                                        <a href="{% url 'core:gizlilik' %}" class="text-decoration-underline"
+                                            target="_blank" rel="noopener noreferrer">Gizlilik Politikasını</a> kabul ediyorum
+                                    </label>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-primary w-100 py-3 mb-3 fw-bold" style="background-color: #2a9d8f; border-color: #2a9d8f;">
+                                    Abone Ol <i class="fas fa-arrow-right ms-2" aria-hidden="true"></i>
+                                </button>
+
+                                <div class="text-center small text-muted">
+                                    <i class="fas fa-lock me-1" aria-hidden="true"></i> Bilgileriniz güvende. İstediğiniz zaman abonelikten
+                                    çıkabilirsiniz.
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <style>
     /* Modern Renk Paleti */
@@ -89,8 +199,6 @@
         --accent-color: #e76f51;
         --light-color: #f8f9fa;
         --dark-color: #212529;
-
-        /* Gradient Renkler */
         --gradient-1: linear-gradient(135deg, #2a9d8f 0%, #1d3557 100%);
         --gradient-2: linear-gradient(135deg, #e76f51 0%, #f4a261 100%);
         --gradient-3: linear-gradient(135deg, #264653 0%, #2a9d8f 100%);
@@ -98,24 +206,14 @@
 
     /* Temel Stiller */
     body {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Inter', 'Poppins', sans-serif;
         overflow-x: hidden;
+        line-height: 1.6;
     }
 
     /* Hero Bölümü */
     .hero-section {
         background-color: var(--dark-color);
-    }
-
-    .parallax-bg {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-image: url("{% static 'images/nature-bg.jpg' %}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
-        z-index: -1;
     }
 
     .overlay {
@@ -128,34 +226,6 @@
         background-clip: text;
         -webkit-text-fill-color: transparent;
         display: inline;
-    }
-
-    .hero-image-container {
-        position: relative;
-        max-width: 400px;
-        margin: 0 auto;
-    }
-
-    .hero-image,
-    .hero-image-placeholder {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-        border: 8px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    .hero-image-placeholder {
-        background: var(--gradient-2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .initials {
-        font-weight: 700;
-        opacity: 0.8;
     }
 
     .scroll-down {
@@ -241,230 +311,48 @@
         transform: translateX(0);
     }
 
-    .btn-outline-primary:hover {
-        color: white !important;
-    }
-
     /* Kart Stilleri */
-    .service-card {
-        transition: all 0.4s ease;
-        border-radius: 15px;
-        overflow: hidden;
-    }
-
-    .service-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .icon-container {
-        width: 70px;
-        height: 70px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        transition: all 0.4s ease;
-    }
-
-    .bg-gradient-1 {
-        background: var(--gradient-1);
-    }
-
-    .bg-gradient-2 {
-        background: var(--gradient-2);
-    }
-
-    .bg-gradient-3 {
-        background: var(--gradient-3);
-    }
-
-    .service-card:hover .icon-container {
-        transform: rotate(10deg) scale(1.1);
-    }
-
-    .service-features li {
-        margin-bottom: 8px;
-    }
-
-    /* Proje Kartları */
-    .project-card {
+    .blog-card {
         transition: all 0.3s ease;
-        border-radius: 12px;
+        border-radius: 8px;
     }
 
-    .project-card:hover {
+    .blog-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
-    .project-image-wrapper {
-        position: relative;
-        overflow: hidden;
-    }
-
-    .project-image-wrapper img,
-    .nature-placeholder {
+    .blog-image-wrapper img {
         transition: transform 0.5s ease;
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
     }
 
-    .project-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+    .blog-overlay {
         background: rgba(42, 157, 143, 0.8);
         opacity: 0;
         transition: opacity 0.3s ease;
     }
 
-    .project-card:hover .project-overlay {
+    .blog-card:hover .blog-overlay {
         opacity: 1;
     }
 
-    .project-card:hover img,
-    .project-card:hover .nature-placeholder {
+    .blog-card:hover img {
         transform: scale(1.05);
     }
 
-    .nature-placeholder {
-        background: var(--gradient-3);
-        position: relative;
+    /* Erişilebilirlik için kontrast iyileştirmeleri */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
     }
 
-    /* İstatistik Kartları */
-    .stat-card {
-        background: white;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    /* Testimonial Slider */
-    .testimonial-slider {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-
-    .testimonial-content {
-        position: relative;
-    }
-
-    .testimonial-content::before {
-        content: '"';
-        position: absolute;
-        top: -30px;
-        left: 20px;
-        font-size: 80px;
-        color: var(--primary-color);
-        opacity: 0.1;
-        font-family: serif;
-        line-height: 1;
-    }
-
-    /* İletişim Formu */
-    .contact-form {
-        position: relative;
-        z-index: 1;
-    }
-
-    .contact-icon {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-    }
-
-    .social-links {
-        display: flex;
-        gap: 15px;
-        margin-top: 30px;
-    }
-
-    .social-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        transition: all 0.3s ease;
-    }
-
-    .social-icon:hover {
-        transform: translateY(-5px);
-    }
-
-    .bg-facebook {
-        background: #3b5998;
-    }
-
-    .bg-twitter {
-        background: #1da1f2;
-    }
-
-    .bg-linkedin {
-        background: #0077b5;
-    }
-
-    .bg-dribbble {
-        background: #ea4c89;
-    }
-
-    .bg-behance {
-        background: #1769ff;
-    }
-
-    /* Animasyonlar */
-    [data-aos] {
-        transition: opacity 0.6s ease, transform 0.6s ease;
-    }
-
-    [data-aos="fade-up"] {
-        transform: translateY(30px);
-        opacity: 0;
-    }
-
-    [data-aos].aos-animate {
-        transform: translateY(0);
-        opacity: 1;
+    .btn-primary:hover {
+        background-color: #23857a;
+        border-color: #23857a;
     }
 
     /* Responsive Tasarım */
-    @media (max-width: 992px) {
-
-        .hero-image,
-        .hero-image-placeholder {
-            width: 300px;
-            height: 300px;
-            margin-top: 40px;
-        }
-
-        .display-3 {
-            font-size: 2.8rem;
-        }
-    }
-
     @media (max-width: 768px) {
-
-        .hero-image,
-        .hero-image-placeholder {
-            width: 250px;
-            height: 250px;
-        }
-
         .display-3 {
             font-size: 2.2rem;
         }
@@ -475,50 +363,72 @@
     }
 </style>
 
+<!-- Critical CSS (Above-the-fold styles) -->
+<style>
+    /* Above-the-fold critical styles */
+    .hero-section, .hero-bg, .overlay {
+        visibility: visible;
+    }
+    .display-3, .text-gradient {
+        opacity: 1;
+    }
+</style>
+
+<!-- Defer non-critical CSS -->
+<link rel="stylesheet" href="{% static 'css/style.css' %}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}" media="print" onload="this.media='all'">
+
 <script>
-    // Basit bir proje filtreleme işlevi
+    // Defer non-critical JavaScript
     document.addEventListener('DOMContentLoaded', function () {
-        const filterButtons = document.querySelectorAll('.project-filter button');
-        const projectItems = document.querySelectorAll('.project-item');
+        // Newsletter form validation
+        const form = document.getElementById('newsletterForm');
+        const privacyError = document.getElementById('privacyError');
+        const privacyCheckbox = document.getElementById('privacyAgreement');
 
-        filterButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                // Aktif butonu güncelle
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
+        if (form && privacyError && privacyCheckbox) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
 
-                const filterValue = this.getAttribute('data-filter');
+                // Reset error state
+                privacyError.classList.add('d-none');
 
-                // Projeleri filtrele
-                projectItems.forEach(item => {
-                    if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
+                // Validate privacy policy
+                if (!privacyCheckbox.checked) {
+                    privacyError.classList.remove('d-none');
+                    privacyCheckbox.focus();
+                    return;
+                }
+
+                // If validation passes
+                if (form.checkValidity()) {
+                    form.submit();
+                }
             });
-        });
 
-        // Testimonial slider için basit bir implementasyon
-        // Gerçek projede bir slider kütüphanesi kullanılmalı
-        let currentTestimonial = 0;
-        const testimonials = document.querySelectorAll('.testimonial-item');
-
-        function showTestimonial(index) {
-            testimonials.forEach((testimonial, i) => {
-                testimonial.style.display = i === index ? 'block' : 'none';
+            // Real-time privacy policy validation
+            privacyCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    privacyError.classList.add('d-none');
+                }
             });
         }
+    });
 
-        // Başlangıçta ilk testimonial'ı göster
-        showTestimonial(0);
-
-        // Otomatik geçiş (opsiyonel)
-        setInterval(() => {
-            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
-            showTestimonial(currentTestimonial);
-        }, 5000);
+    // Load non-critical resources after page load
+    window.addEventListener('load', function() {
+        // Lazy load non-critical third-party scripts
+        const lazyScripts = [
+            'https://code.jquery.com/jquery-3.6.0.min.js',
+            'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js'
+        ];
+        
+        lazyScripts.forEach(src => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = true;
+            document.body.appendChild(script);
+        });
     });
 </script>
 

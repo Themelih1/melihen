@@ -1,0 +1,48 @@
+{% extends 'core/base_email.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif; padding: 20px;">
+    <!-- Header -->
+    <div style="text-align: center; padding: 30px 0 20px;">
+        <div style="background-color: #F3F4F6; width: 80px; height: 80px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+            <svg style="width: 40px; height: 40px; color: #6B7280;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728"></path>
+            </svg>
+        </div>
+        <h1 style="color: #111827; font-size: 28px; font-weight: 600; margin-bottom: 10px;">Aboneliğiniz Sonlandırıldı</h1>
+        <p style="color: #6B7280; font-size: 16px; margin: 0;">Artık bültenlerimizi almayacaksınız</p>
+    </div>
+
+    <!-- Content Card -->
+    <div style="background: #FFFFFF; border-radius: 12px; padding: 32px; margin-bottom: 24px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <h2 style="color: #111827; font-size: 20px; font-weight: 600; margin-top: 0; margin-bottom: 16px;">Üzgünüz {{ name }} 😔</h2>
+        
+        <p style="color: #4B5563; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+            Bülten aboneliğiniz başarıyla sonlandırıldı. Artık size e-posta göndermeyeceğiz.
+        </p>
+        
+        <div style="background-color: #F3F4F6; border-radius: 8px; padding: 16px; margin-bottom: 24px; text-align: center;">
+            <p style="color: #374151; font-size: 14px; margin: 0;">
+                Fikrinizi değiştirirseniz, istediğiniz zaman <a href="{{ resubscribe_link }}" style="color: #4F46E5; text-decoration: none; font-weight: 500;">yeniden abone olabilirsiniz</a>.
+            </p>
+        </div>
+
+        <p style="color: #4B5563; font-size: 15px; line-height: 1.6; margin-bottom: 24px;">
+            Bizi tercih ettiğiniz için teşekkür ederiz. Sizi tekrar aramızda görmek isteriz!
+        </p>
+        
+        <a href="{{ website_url }}" style="display: inline-block; border: 1px solid #4F46E5; color: #4F46E5; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 500; font-size: 15px; margin-top: 16px;">Web Sitemizi Ziyaret Edin</a>
+    </div>
+
+    <!-- Feedback Section -->
+    <div style="text-align: center; margin-bottom: 24px;">
+        <p style="color: #6B7280; font-size: 14px; margin-bottom: 8px;">Neden ayrıldığınızı bizimle paylaşmak ister misiniz?</p>
+        <a href="{{ feedback_link }}" style="color: #4F46E5; text-decoration: none; font-weight: 500;">Geri bildirim verin</a>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; padding: 16px 0; border-top: 1px solid #E5E7EB; color: #6B7280; font-size: 13px;">
+        <p style="margin: 0;">© {% now "Y" %} [Şirket Adı]. Tüm hakları saklıdır.</p>
+    </div>
+</div>
+{% endblock %}

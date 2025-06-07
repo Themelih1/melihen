@@ -8,27 +8,98 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils.text import slugify
 from django.utils import timezone
-from django.core.validators import MinLengthValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
+from cloudinary.models import CloudinaryField
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+import os
+from django.utils import timezone
 
 User = get_user_model()
 
-# Profil resmi için dosya yolu oluşturma
-def user_directory_path(instance, filename):
-    return f'profile_pics/user_{instance.user.id}/{timezone.now().strftime("%Y/%m/%d")}/{filename}'
 
-def blog_image_path(instance, filename):
-    return f'blog/{timezone.now().strftime("%Y/%m/%d")}/{filename}'
+class BaseModel(models.Model):
+    """
+    Abstract base model with common fields and methods
+    """
+    created_at = models.DateTimeField(default=timezone.now) 
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Updated At"))
+    is_active = models.BooleanField(default=True, verbose_name=_("Active"))
 
-def project_image_path(instance, filename):
-    return f'projects/{timezone.now().strftime("%Y/%m/%d")}/{filename}'
+    class Meta:
+        abstract = True
 
-# Kategori Modeli
-class Category(models.Model):
-    name = models.CharField(max_length=50, unique=True, verbose_name="Kategori Adı")
-    slug = models.SlugField(unique=True, max_length=60, allow_unicode=True)
-    description = models.TextField(blank=True, verbose_name="Açıklama")
-    color = models.CharField(max_length=7, default='#4F46E5', verbose_name="Renk Kodu")
-    is_active = models.BooleanField(default=True, verbose_name="Aktif")
+class Category(BaseModel):
+    name = models.CharField(
+        max_length=50, 
+        unique=True,
+        verbose_name=_("Category Name"),
+        help_text=_("Maximum 50 characters")
+    )
+    slug = models.SlugField(
+        unique=True, 
+        max_length=60, 
+        allow_unicode=True,
+        editable=True
+    )
+    description = models.TextField(
+        blank=True,
+        verbose_name=_("Description"),
+        help_text=_("Optional category description")
+    )
+    color = models.CharField(
+        max_length=7, 
+        default='#4F46E5',
+        verbose_name=_("Color Code"),
+        help_text=_("Hex color code for UI display")
+    )
+    icon = models.CharField(
+        max_length=50,
+        blank=True,
+        verbose_name=_("Icon"),
+        help_text=_("Icon class name (e.g., 'fa-code')")
+    )
+
+    def __str__(self):
+        return self.name
+
+    def clean(self):
+        if not self.name:
+            raise ValidationError(_("Category name cannot be empty"))
+        if len(self.name) > 50:
+            raise ValidationError(_("Category name cannot exceed 50 characters"))
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name, allow_unicode=True)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("Category")
+        verbose_name_plural = _("Categories")
+        ordering = ['name']
+        indexes = [
+            models.Index(fields=['slug']),
+            models.Index(fields=['is_active']),
+        ]
+
+class Tag(BaseModel):
+    name = models.CharField(
+        max_length=50, 
+        unique=True,
+        verbose_name=_("Tag Name")
+    )
+    slug = models.SlugField(
+        unique=True, 
+        max_length=60, 
+        allow_unicode=True,
+        editable=True
+    )
+    color = models.CharField(
+        max_length=7, 
+        default='#10B981',
+        verbose_name=_("Color Code")
+    )
 
     def __str__(self):
         return self.name
@@ -39,119 +110,122 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = "Kategori"
-        verbose_name_plural = "Kategoriler"
+        verbose_name = _("Tag")
+        verbose_name_plural = _("Tags")
         ordering = ['name']
 
-# Etiket Modeli
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True, verbose_name="Etiket Adı")
-    slug = models.SlugField(unique=True, max_length=60, allow_unicode=True)
-    color = models.CharField(max_length=7, default='#10B981', verbose_name="Renk Kodu")
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name, allow_unicode=True)
-        super().save(*args, **kwargs)
-
-    class Meta:
-        verbose_name = "Etiket"
-        verbose_name_plural = "Etiketler"
-        ordering = ['name']
-
-# Blog Gönderisi Modeli
-class BlogPost(models.Model):
+class BlogPost(BaseModel):
     STATUS_CHOICES = (
-        ('draft', 'Taslak'),
-        ('published', 'Yayınlandı'),
-        ('archived', 'Arşivlendi'),
+        ('draft', _('Draft')),
+        ('published', _('Published')),
+        ('archived', _('Archived')),
     )
 
     title = models.CharField(
         max_length=200,
-        verbose_name="Başlık",
-        validators=[MinLengthValidator(10)]
+        verbose_name=_("Title"),
+        validators=[
+            MinLengthValidator(10, _("Title must be at least 10 characters")),
+            MaxLengthValidator(200, _("Title cannot exceed 200 characters"))
+        ]
     )
     slug = models.SlugField(
         unique=True,
-        max_length=255,
-        allow_unicode=True,
-        verbose_name="URL Uzantısı"
+        blank=True,
     )
-    content = tinymce_models.HTMLField(verbose_name="İçerik")
+    content = tinymce_models.HTMLField(verbose_name=_("Content"))
     excerpt = models.TextField(
         max_length=300,
         blank=True,
-        verbose_name="Özet",
-        help_text="Kısa açıklama (SEO için önemli)"
+        verbose_name=_("Excerpt"),
+        help_text=_("Short description (important for SEO)")
     )
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='blog_posts',
-        verbose_name="Yazar"
+        verbose_name=_("Author")
     )
     date_posted = models.DateTimeField(
         default=timezone.now,
-        verbose_name="Yayınlanma Tarihi"
+        verbose_name=_("Publication Date")
     )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Güncellenme Tarihi"
-    )
-    image = models.ImageField(
-        upload_to=blog_image_path,
+    image = CloudinaryField(
+        'image',
+        folder='blog/featured_images',
         blank=True,
         null=True,
-        verbose_name="Kapak Görseli"
+        help_text=_("Optimal size: 1200x630 pixels")
+    )
+    image_alt = models.CharField(
+        max_length=125,
+        blank=True,
+        verbose_name=_("Image Alt Text"),
+        help_text=_("Description of image for accessibility")
     )
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
         default='draft',
-        verbose_name="Durum"
+        verbose_name=_("Status")
     )
     categories = models.ManyToManyField(
         Category,
         through='BlogPostCategory',
         related_name='blog_posts',
-        verbose_name="Kategoriler"
+        verbose_name=_("Categories")
     )
     tags = models.ManyToManyField(
         Tag,
         through='BlogPostTag',
         related_name='blog_posts',
-        verbose_name="Etiketler"
+        verbose_name=_("Tags")
     )
     meta_title = models.CharField(
         max_length=60,
         blank=True,
-        verbose_name="Meta Başlık",
-        help_text="SEO için başlık (max 60 karakter)"
+        verbose_name=_("Meta Title"),
+        help_text=_("SEO title (max 60 characters)")
     )
     meta_description = models.CharField(
         max_length=160,
         blank=True,
-        verbose_name="Meta Açıklama",
-        help_text="SEO için açıklama (max 160 karakter)"
+        verbose_name=_("Meta Description"),
+        help_text=_("SEO description (max 160 characters)")
     )
+    is_featured = models.BooleanField(
+        default=False,
+        verbose_name=_("Featured Post")
+    )
+    view_count = models.PositiveIntegerField(
+        default=0,
+        verbose_name=_("View Count")
+    )   
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('post_detail', kwargs={'slug': self.slug})
+        return reverse('core:post_detail', kwargs={'slug': self.slug})
 
     @property
     def reading_time(self):
+        """Calculate estimated reading time in minutes"""
         cleaned_content = strip_tags(self.content)
         cleaned_content = ' '.join(cleaned_content.split())
         word_count = len(cleaned_content.split())
-        return max(1, round(word_count / 200))
+        return max(1, round(word_count / 200))  # Assuming 200 words per minute
+    
+    def category_list(self):
+        return ", ".join([cat.name for cat in self.categories.all()])
+
+    def clean(self):
+        if not self.title:
+            raise ValidationError(_("Title cannot be empty"))
+        if self.meta_title and len(self.meta_title) > 60:
+            raise ValidationError(_("Meta title cannot exceed 60 characters"))
+        if self.meta_description and len(self.meta_description) > 160:
+            raise ValidationError(_("Meta description cannot exceed 160 characters"))
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -163,15 +237,16 @@ class BlogPost(models.Model):
         super().save(*args, **kwargs)
 
     class Meta:
-        verbose_name = "Blog Gönderisi"
-        verbose_name_plural = "Blog Gönderileri"
+        verbose_name = _("Blog Post")
+        verbose_name_plural = _("Blog Posts")
         ordering = ['-date_posted']
         indexes = [
             models.Index(fields=['slug']),
             models.Index(fields=['status']),
+            models.Index(fields=['is_featured']),
+            models.Index(fields=['view_count']),
         ]
 
-# Blog Gönderisi ve Kategori Ara Modeli
 class BlogPostCategory(models.Model):
     blog_post = models.ForeignKey(
         BlogPost,
@@ -185,15 +260,14 @@ class BlogPostCategory(models.Model):
     )
     is_primary = models.BooleanField(
         default=False,
-        verbose_name="Birincil Kategori"
+        verbose_name=_("Primary Category")
     )
 
     class Meta:
-        verbose_name = "Blog Gönderisi Kategorisi"
-        verbose_name_plural = "Blog Gönderisi Kategorileri"
+        verbose_name = _("Blog Post Category")
+        verbose_name_plural = _("Blog Post Categories")
         unique_together = ('blog_post', 'category')
 
-# Blog Gönderisi ve Etiket Ara Modeli
 class BlogPostTag(models.Model):
     blog_post = models.ForeignKey(
         BlogPost,
@@ -207,244 +281,252 @@ class BlogPostTag(models.Model):
     )
 
     class Meta:
-        verbose_name = "Blog Gönderisi Etiketi"
-        verbose_name_plural = "Blog Gönderisi Etiketleri"
+        verbose_name = _("Blog Post Tag")
+        verbose_name_plural = _("Blog Post Tags")
         unique_together = ('blog_post', 'tag')
 
-# Yorum Modeli
-class Comment(models.Model):
-    post = models.ForeignKey(
-        BlogPost,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name="Gönderi"
-    )
-    author = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        verbose_name="Yazar"
-    )
-    name = models.CharField(
-        max_length=100,
-        verbose_name="Ad Soyad",
-        blank=True
-    )
-    email = models.EmailField(
-        verbose_name="E-posta",
-        blank=True
-    )
-    content = models.TextField(
-        verbose_name="Yorum"
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Oluşturulma Tarihi"
-    )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Güncellenme Tarihi"
-    )
+class Comment(BaseModel):
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name='comments')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=100, blank=True) 
+    email = models.EmailField(blank=True)
+    content = models.TextField()
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
         null=True,
         blank=True,
         related_name='replies',
-        verbose_name="Üst Yorum"
+        verbose_name=_("Parent Comment")
     )
     is_approved = models.BooleanField(
         default=False,
-        verbose_name="Onaylandı"
+        verbose_name=_("Approved")
     )
     ip_address = models.GenericIPAddressField(
         blank=True,
         null=True,
-        verbose_name="IP Adresi"
+        verbose_name=_("IP Address")
+    )
+    user_agent = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name=_("User Agent")
     )
 
     def __str__(self):
         author_name = self.author.get_full_name() if self.author else self.name
         return f"{author_name} - {self.post.title}"
 
-    class Meta:
-        verbose_name = "Yorum"
-        verbose_name_plural = "Yorumlar"
-        ordering = ['-created_at']
+   
+    def clean(self):
+        if not self.author and (not self.name or not self.email):
+            raise ValidationError("Misafir yorumları için ad ve email gereklidir")
 
-# Bülten Abonesi Modeli
-class NewsletterSubscriber(models.Model):
-    email = models.EmailField(
-        unique=True,
-        verbose_name="E-posta"
-    )
-    subscribed_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name="Abonelik Tarihi"
-    )
-    is_active = models.BooleanField(
-        default=True,
-        verbose_name="Aktif Abonelik"
-    )
-    token = models.CharField(
-        max_length=64,
-        unique=True,
-        verbose_name="Doğrulama Tokenı"
-    )
-    is_verified = models.BooleanField(
-        default=False,
-        verbose_name="E-posta Doğrulandı"
+    class Meta:
+        verbose_name = _("Comment")
+        verbose_name_plural = _("Comments")
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['is_approved']),
+            models.Index(fields=['post']),
+        ]
+
+# NewsletterSubscription modelini güncelleyin
+class NewsletterSubscription(BaseModel):
+    email = models.EmailField(unique=True, verbose_name=_("Email"))
+    name = models.CharField(max_length=100, blank=True)
+    is_active = models.BooleanField(default=True)
+    token = models.CharField(max_length=64, unique=True, verbose_name=_("Verification Token"))
+    is_verified = models.BooleanField(default=False, verbose_name=_("Verified"))
+    subscribed_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Subscription Date"))
+    subscription_source = models.CharField(
+        max_length=50,
+        default='website_form',
+        choices=(
+            ('comment_form', _('Comment Form')),
+            ('website_form', _('Website Form')),
+            ('api', _('API')),
+        ),
+        verbose_name=_("Subscription Source")
     )
 
     def __str__(self):
         return self.email
 
-    class Meta:
-        verbose_name = "Bülten Abonesi"
-        verbose_name_plural = "Bülten Aboneleri"
-        ordering = ['-subscribed_at']
+    def generate_token(self):
+        """Güvenli bir token oluşturur"""
+        import secrets
+        self.token = secrets.token_hex(32)
 
-# Profil Modeli
+    def get_name(self):
+        """Email'den isim kısmını çıkarır (opsiyonel)"""
+        return self.email.split('@')[0]
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.generate_token()
+        super().save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = _("Newsletter Subscription")
+        verbose_name_plural = _("Newsletter Subscriptions")
+        ordering = ['-subscribed_at']
+        indexes = [
+            models.Index(fields=['email']),
+            models.Index(fields=['is_verified']),
+        ]
 class Profile(models.Model):
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
-        related_name='profile'
+        related_name='profile',
+        verbose_name=_("User")
     )
-    profile_picture = models.ImageField(
-        upload_to=user_directory_path,
-        default='profile_pics/default_profile.jpg',
-        verbose_name="Profil Resmi"
+    profile_picture = CloudinaryField(
+        'image',
+        folder='profiles',
+        blank=True,
+        null=True,
+        help_text=_("Upload a profile picture")
     )
     bio = tinymce_models.HTMLField(
         blank=True,
         null=True,
-        verbose_name="Hakkımda"
+        verbose_name=_("Bio")
     )
     website = models.URLField(
         blank=True,
-        verbose_name="Web Sitesi"
+        verbose_name=_("Website")
     )
     location = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name="Konum"
-    )
-    updated = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Güncellenme Tarihi"
+        verbose_name=_("Location")
     )
     social_github = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name="GitHub"
+        verbose_name=_("GitHub")
     )
     social_twitter = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name="Twitter"
+        verbose_name=_("Twitter")
     )
     social_linkedin = models.CharField(
         max_length=100,
         blank=True,
-        verbose_name="LinkedIn"
+        verbose_name=_("LinkedIn")
+    )
+    social_instagram = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Instagram")
+    )
+    updated = models.DateTimeField(
+        auto_now=True,
+        verbose_name=_("Last Updated")
     )
 
     def __str__(self):
-        return f"{self.user.username} Profili"
+        return f"{self.user.username}'s Profile"
 
     class Meta:
-        verbose_name = "Profil"
-        verbose_name_plural = "Profiller"
+        verbose_name = _("Profile")
+        verbose_name_plural = _("Profiles")
 
-# Proje Modeli
-class Project(models.Model):
-    PROJECT_STATUS = (
-        ('ongoing', 'Devam Ediyor'),
-        ('completed', 'Tamamlandı'),
-        ('planned', 'Planlanıyor'),
+class Project(BaseModel):
+    STATUS_CHOICES = (
+        ('ongoing', _('Ongoing')),
+        ('completed', _('Completed')),
+        ('planned', _('Planned')),
     )
 
     title = models.CharField(
         max_length=200,
-        verbose_name="Proje Başlığı",
+        verbose_name=_("Project Title"),
         validators=[MinLengthValidator(10)]
     )
     slug = models.SlugField(
         unique=True,
         max_length=255,
         allow_unicode=True,
-        verbose_name="URL Uzantısı"
+        verbose_name=_("URL Slug"),
+        editable=True
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="projects",
-        verbose_name="Yazar"
+        verbose_name=_("Author")
     )
     description = tinymce_models.HTMLField(
-        verbose_name="Açıklama"
+        verbose_name=_("Description")
     )
     short_description = models.CharField(
         max_length=250,
         blank=True,
-        verbose_name="Kısa Açıklama"
+        verbose_name=_("Short Description")
     )
-    image = models.ImageField(
-        upload_to=project_image_path,
+    image = CloudinaryField(
+        'image',
+        folder='projects/featured',
         blank=True,
         null=True,
-        verbose_name="Kapak Görseli"
+        help_text=_("Upload a project image")
+    )
+    image_alt = models.CharField(
+        max_length=125,
+        blank=True,
+        verbose_name=_("Image Alt Text")
     )
     url = models.URLField(
         blank=True,
         null=True,
-        verbose_name="Proje Linki"
+        verbose_name=_("Project URL")
     )
     repository_url = models.URLField(
         blank=True,
         null=True,
-        verbose_name="Depo Linki (GitHub vb.)"
+        verbose_name=_("Repository URL")
     )
     technologies = models.CharField(
         max_length=250,
         blank=True,
-        verbose_name="Teknolojiler"
+        verbose_name=_("Technologies"),
+        help_text=_("Comma-separated list of technologies used")
     )
     tags = models.ManyToManyField(
         Tag,
         blank=True,
         related_name="projects",
-        verbose_name="Etiketler"
+        verbose_name=_("Tags")
     )
     is_featured = models.BooleanField(
         default=False,
-        verbose_name="Öne Çıkarılan"
+        verbose_name=_("Featured Project")
     )
     status = models.CharField(
         max_length=10,
-        choices=PROJECT_STATUS,
+        choices=STATUS_CHOICES,
         default='completed',
-        verbose_name="Durum"
-    )
-    date_posted = models.DateTimeField(
-        default=timezone.now,
-        verbose_name="Oluşturulma Tarihi"
-    )
-    last_updated = models.DateTimeField(
-        auto_now=True,
-        verbose_name="Güncellenme Tarihi"
+        verbose_name=_("Status")
     )
     start_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name="Başlangıç Tarihi"
+        verbose_name=_("Start Date")
     )
     end_date = models.DateField(
         blank=True,
         null=True,
-        verbose_name="Bitiş Tarihi"
+        verbose_name=_("End Date")
+    )
+    client = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_("Client")
     )
 
     def __str__(self):
@@ -453,26 +535,24 @@ class Project(models.Model):
     def get_absolute_url(self):
         return reverse("core:project_detail", kwargs={"slug": self.slug})
 
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.title, allow_unicode=True)
-        super().save(*args, **kwargs)
-
     def get_technologies_list(self):
         if self.technologies:
             return [tech.strip() for tech in self.technologies.split(',')]
         return []
 
-    class Meta:
-        verbose_name = "Proje"
-        verbose_name_plural = "Projeler"
-        ordering = ['-date_posted']
-        indexes = [
-            models.Index(fields=['slug']),
-            models.Index(fields=['is_featured']),
-        ]
+def save(self, *args, **kwargs):
+    super().save(*args, **kwargs)
 
-# Sinyaller
+class Meta:
+    verbose_name = _("Project")
+    verbose_name_plural = _("Projects")
+    ordering = ['-start_date']
+    indexes = [
+        models.Index(fields=['slug']),
+        models.Index(fields=['is_featured']),
+        models.Index(fields=['status']),
+    ]
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -482,3 +562,17 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+def blog_image_path(instance, filename):
+    """Blog gönderileri için resim yolu"""
+    date_path = timezone.now().strftime('%Y/%m/%d')
+    return os.path.join('blog_images', date_path, filename)
+
+def user_directory_path(instance, filename):
+    """Kullanıcı profili resimleri için yol"""
+    return os.path.join('profile_pics', str(instance.user.id), filename)
+
+def project_image_path(instance, filename):
+    """Proje resimleri için yol"""
+    return os.path.join('project_images', str(instance.id), filename)
+
