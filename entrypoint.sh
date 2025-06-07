@@ -1,5 +1,7 @@
 #!/bin/sh
 
+mkdir -p logs
+
 echo "Running collectstatic..."
 python manage.py collectstatic --noinput
 

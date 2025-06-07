@@ -19,6 +19,8 @@ COPY . .
 # Entrypoint script'i kopyala ve izin ver
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
 
 EXPOSE 8000
 
