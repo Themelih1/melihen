@@ -16,12 +16,9 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# Entrypoint script'i kopyala ve izin ver
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 
 EXPOSE 8000
-
-CMD ["/app/entrypoint.sh"]

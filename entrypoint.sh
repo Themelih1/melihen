@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eux
 
 mkdir -p logs
 
