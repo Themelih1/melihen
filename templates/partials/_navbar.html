@@ -11,13 +11,17 @@
     <!-- Sidebar Container (Sadece masaüstünde görünecek) -->
     <div class="sidebar-nature desktop-only" id="sidebarNature">
 
+        <!-- Collapse Toggle Button -->
+        <div class="collapse-toggle-nature" id="collapseToggleNature">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+
         <!-- Profile Section -->
         <div class="profile-nature">
             <img src="{% static 'images/Profil1.png' %}" alt="Profile" class="avatar-nature">
             <h3 class="profile-name-nature">Melih Yılmaz</h3>
             <p class="profile-role-nature">Full Stack Developer</p>
         </div>
-
 
         <!-- Navigation -->
         <div class="nav-section-nature">
@@ -106,10 +110,8 @@
                 <div class="mobile-menu-link" id="mobileThemeToggleInMenu">
                     <i class="fas fa-moon"></i> Tema Değiştir
                 </div>
-                <!-- Collapse Toggle Button -->
             </div>
         </div>
-    </div>
     </div>
 
     <style>
@@ -120,6 +122,69 @@
 
         .mobile-only {
             display: none;
+        }
+
+        /* Sidebar Collapse Toggle */
+        .collapse-toggle-nature {
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #2c3e50;
+            width: 24px;
+            height: 48px;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            z-index: 1;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .collapse-toggle-nature:hover {
+            background: #34495e;
+        }
+
+        /* Collapsed Sidebar Styles */
+        .sidebar-nature.collapsed {
+            width: 70px !important;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar-nature.collapsed .profile-nature,
+        .sidebar-nature.collapsed .link-text,
+        .sidebar-nature.collapsed .theme-toggle-text-nature {
+            display: none;
+        }
+
+        .sidebar-nature.collapsed .nav-link-nature {
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .sidebar-nature.collapsed .nav-section-nature {
+            margin-top: 20px;
+        }
+
+        .sidebar-nature.collapsed .theme-toggle-nature {
+            justify-content: center;
+            padding: 15px 0;
+        }
+
+        .sidebar-nature.collapsed .collapse-toggle-nature i {
+            transform: rotate(180deg);
+        }
+
+        /* Dark mode for collapse toggle */
+        body.dark-mode .collapse-toggle-nature {
+            background: #1a1a1a;
+        }
+
+        body.dark-mode .collapse-toggle-nature:hover {
+            background: #2d2d2d;
         }
 
         /* Mobil görünüm için stiller (768px ve altı) */
@@ -267,6 +332,8 @@
             // Masaüstü elementleri
             const themeToggle = document.getElementById('themeToggleNature');
             const themeIcon = themeToggle?.querySelector('.theme-icon-nature');
+            const collapseToggle = document.getElementById('collapseToggleNature');
+            const sidebar = document.getElementById('sidebarNature');
 
             // Mobil elementler
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
@@ -274,6 +341,22 @@
             const closeMobileMenu = document.getElementById('closeMobileMenu');
             const mobileThemeToggle = document.getElementById('mobileThemeToggleInMenu');
             const mobileThemeIcon = mobileThemeToggle?.querySelector('i');
+
+            // Sidebar collapse/expand functionality
+            if (collapseToggle && sidebar) {
+                collapseToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Save state to localStorage
+                    const isCollapsed = sidebar.classList.contains('collapsed');
+                    localStorage.setItem('sidebarCollapsed', isCollapsed);
+                });
+                
+                // Load saved state
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    sidebar.classList.add('collapsed');
+                }
+            }
 
             // Mobil menü toggle - sadece menü butonuna tıklanınca açılacak
             if (mobileMenuToggle) {
