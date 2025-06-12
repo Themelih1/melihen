@@ -283,8 +283,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = 'Melih\'in Blogu <melih.yilmaz904@gmail.com>'
-SERVER_EMAIL = 'melih.yilmaz904@gmail.com'
+DEFAULT_FROM_EMAIL = 'Melih\'in Blogu <enmelih.contact@gmail.com>'
+SERVER_EMAIL = 'enmelih.contact@gmail.com'
 
 
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
