@@ -278,13 +278,13 @@ if DEBUG:
 ADMIN_URL = 'panda/' 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.mailersend.net'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = 'Melih\'in Blogu <enmelih.contact@gmail.com>'
-SERVER_EMAIL = 'enmelih.contact@gmail.com'
+EMAIL_HOST_USER = os.environ.get("MAILERSEND_SMTP_USER")  # SMTP kullanıcı adını env değişkenine koy
+EMAIL_HOST_PASSWORD = os.environ.get("MAILERSEND_SMTP_PASSWORD")  # SMTP şifresini env değişkenine koy
+DEFAULT_FROM_EMAIL = 'Melih\'in Blogu<no-reply@enmelih.com>'  # Domain’ine ait gönderici mail adresi
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
