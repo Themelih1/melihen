@@ -172,6 +172,8 @@
             --dark-color: #212529;
             --text-light: #f8f9fa;
             --text-dark: #212529;
+            --text-primary: #4361ee;
+            --text-secondary: #3f37c9;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             --glass-bg: rgba(255, 255, 255, 0.85);
@@ -191,7 +193,11 @@
             --secondary-color: #560bad;
             --accent-color: #b5179e;
             --light-color: #212529;
-            --dark-color: #f8f9fa;
+            --dark-color: #00060cad;
+            --text-light: #f8f9fa;
+            --text-dark: #f8f9fa;
+            --text-primary: #b5179e;
+            --text-secondary: #7209b7;
             --glass-bg: rgba(33, 37, 41, 0.85);
             --glass-border: 1px solid rgba(255, 255, 255, 0.05);
             --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
@@ -208,6 +214,13 @@
             font-family: var(--font-family);
             font-weight: var(--font-weight-normal);
             font-size: var(--font-size-normal);
+            padding-left: 280px;
+            transition: var(--transition);
+        }
+
+        body.dark-mode {
+            background-color: #121212;
+            color: var(--text-light);
         }
 
         /* Desktop Sidebar Styles */
@@ -270,7 +283,7 @@
         }
 
         .profile-role {
-            color: var(--primary-color);
+            color: var(--text-primary);
             font-size: var(--font-size-normal);
             font-weight: var(--font-weight-medium);
             margin-bottom: 15px;
@@ -333,7 +346,7 @@
 
         .nav-link.active {
             background: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
+            color: var(--text-primary);
         }
 
         .nav-link.active::before {
@@ -347,12 +360,14 @@
             align-items: center;
             justify-content: center;
             margin-right: 15px;
+            color: inherit;
         }
 
         .nav-text {
             font-size: var(--font-size-normal);
             font-weight: var(--font-weight-medium);
             flex: 1;
+            color: inherit;
         }
 
         .nav-indicator {
@@ -469,6 +484,10 @@
         /* Collapsed Sidebar */
         .modern-sidebar.collapsed {
             width: 80px;
+        }
+
+        .modern-sidebar.collapsed ~ body {
+            padding-left: 80px;
         }
 
         .modern-sidebar.collapsed .profile-info,
@@ -636,7 +655,7 @@
 
         .mobile-profile-info p {
             font-size: var(--font-size-normal);
-            color: var(--primary-color);
+            color: var(--text-primary);
             font-weight: var(--font-weight-medium);
         }
 
@@ -672,10 +691,12 @@
             margin-right: 15px;
             width: 20px;
             text-align: center;
+            color: var(--text-primary);
         }
 
         .mobile-menu-link span {
             flex: 1;
+            color: inherit;
         }
 
         .mobile-menu-link:hover {
@@ -696,6 +717,17 @@
             cursor: pointer;
             font-size: var(--font-size-normal);
             font-weight: var(--font-weight-medium);
+            color: var(--text-dark);
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .mobile-theme-toggle:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .mobile-theme-toggle i {
+            color: var(--text-primary);
         }
 
         .mobile-toggle-switch {
@@ -779,6 +811,10 @@
             .modern-sidebar {
                 width: 240px;
             }
+            
+            body {
+                padding-left: 240px;
+            }
         }
 
         @media (max-width: 768px) {
@@ -801,6 +837,10 @@
 
             .mobile-menu-overlay.active .mobile-menu-container {
                 transform: translateY(0);
+            }
+            
+            body {
+                padding-left: 0 !important;
             }
         }
     </style>
@@ -836,7 +876,7 @@
                 mobileMenuToggle.addEventListener('click', () => {
                     mobileMenuToggle.classList.toggle('active');
                     mobileMenuOverlay.classList.toggle('active');
-                    document.body.style.overflow = 'hidden';
+                    document.body.style.overflow = mobileMenuOverlay.classList.contains('active') ? 'hidden' : '';
                 });
             }
             
@@ -859,6 +899,12 @@
                 
                 // Update UI elements
                 updateThemeUI();
+                
+                // Update theme text
+                const themeLabels = document.querySelectorAll('.theme-label');
+                themeLabels.forEach(label => {
+                    label.textContent = isDarkMode ? 'Açık Mod' : 'Koyu Mod';
+                });
             }
             
             // Update Theme UI Elements
@@ -866,6 +912,7 @@
                 const isDarkMode = document.body.classList.contains('dark-mode');
                 const themeSwitches = document.querySelectorAll('.toggle-switch, .mobile-toggle-switch');
                 const themeKnobs = document.querySelectorAll('.switch-knob, .mobile-switch-knob');
+                const moonIcons = document.querySelectorAll('.mobile-theme-toggle i');
                 
                 themeSwitches.forEach(switchEl => {
                     switchEl.style.background = isDarkMode ? '#555' : '#ccc';
@@ -874,6 +921,10 @@
                 themeKnobs.forEach(knob => {
                     knob.style.transform = isDarkMode ? 'translateX(20px)' : 'translateX(2px)';
                     knob.style.background = isDarkMode ? 'var(--light-color)' : 'white';
+                });
+                
+                moonIcons.forEach(icon => {
+                    icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
                 });
             }
             
@@ -907,11 +958,13 @@
             const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
             
             navLinks.forEach(link => {
-                const linkPath = new URL(link.href).pathname;
-                if (currentPath === linkPath) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
+                if (link.href) {
+                    const linkPath = new URL(link.href).pathname;
+                    if (currentPath === linkPath) {
+                        link.classList.add('active');
+                    } else {
+                        link.classList.remove('active');
+                    }
                 }
             });
         });
