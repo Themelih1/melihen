@@ -290,3 +290,5 @@ SERVER_EMAIL = 'melih.yilmaz904@gmail.com'
 TEMPLATES[0]['OPTIONS']['context_processors'] += [
     'core.context_processors.global_settings',
 ]
+
+SITE_URL = os.getenv("SITE_URL", "https://melihen.com")
