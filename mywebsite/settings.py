@@ -283,7 +283,7 @@ EMAIL_PORT = 587  # STARTTLS portu
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("AWS_SES_SMTP_USER")  # Amazon SES SMTP kullanıcı adı (env değişkeninde)
 EMAIL_HOST_PASSWORD = os.environ.get("AWS_SES_SMTP_PASSWORD")  # Amazon SES SMTP şifresi (env değişkeninde)
-DEFAULT_FROM_EMAIL = 'Melih\'in Blogu <no-reply@enmelih.com>'  # Domain’e ait onaylı gönderici adresi
+DEFAULT_FROM_EMAIL = 'Melih’in Blogu <info@enmelih.com>' # Domain’e ait onaylı gönderici adresi
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 
