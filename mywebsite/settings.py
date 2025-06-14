@@ -278,7 +278,7 @@ if DEBUG:
 ADMIN_URL = 'panda/' 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'email-smtp.eu-north-1.amazonaws.com'  # Amazon SES SMTP endpoint
+EMAIL_HOST = 'email-smtp.eu-central-1.amazonaws.com' # Amazon SES SMTP endpoint
 EMAIL_PORT = 587  # STARTTLS portu
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get("AWS_SES_SMTP_USER")  # Amazon SES SMTP kullanıcı adı (env değişkeninde)
