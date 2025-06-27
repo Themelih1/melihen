@@ -130,7 +130,7 @@ def send_newsletter(post):
         is_verified=True
     )
 
-    site_url = getattr(settings, 'SITE_URL', 'http://localhost:8000')
+    site_url = getattr(settings, 'SITE_URL', 'http://enmelih.com')
     subject = _("New Blog Post: {}").format(post.title)
 
     for subscriber in active_subscribers:
@@ -305,5 +305,6 @@ def subscribe_newsletter(request):
 
         messages.success(request, 'Bültenimize başarıyla abone oldunuz! Teşekkür ederiz.')
         return redirect('core:home')
+    
 
     return redirect('core:home')
