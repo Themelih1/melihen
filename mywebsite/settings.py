@@ -247,6 +247,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://melihen.com',
     'https://www.melihen.com',
     'https://enmelih.com',
+    'https://amazing-dorri-melih2-d651050b.koyeb.app',
+    'http://amazing-dorri-melih2-d651050b.koyeb.app/',
+    
 ]
 
 if os.getenv("DEBUG", "False") == "False":
