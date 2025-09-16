@@ -1,7 +1,6 @@
 {% load static %}
 
 <head>
-    <link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -18,7 +17,7 @@
             </div>
             <div class="profile-info">
                 <h3 class="profile-name">Melih Yılmaz</h3>
-                <p class="profile-role">Full Stack Developer</p>
+                <p class="profile-role">Kişisel Blog</p>
                 <div class="profile-social">
                     <a href="https://github.com/Themelih1" class="social-icon"><i class="fab fa-github"></i></a>
                     <a href="https://www.linkedin.com/in/melih-yilmaz-ab6409169/" class="social-icon"><i class="fab fa-linkedin"></i></a>
@@ -34,16 +33,7 @@
                 <span class="nav-text">Ana Sayfa</span>
                 <div class="nav-indicator"></div>
             </a>
-            <a href="{%url 'core:unsplash_photos'%}" class="nav-link">
-                <div class="nav-icon"><i class="fas fa-camera"></i></div>
-                <span class="nav-text">Fotograf</span>
-                <div class="nav-indicator"></div>
-            </a>
-            <a href="{% url 'core:projects' %}" class="nav-link">
-                <div class="nav-icon"><i class="fas fa-project-diagram"></i></div>
-                <span class="nav-text">Projeler</span>
-                <div class="nav-indicator"></div>
-            </a>
+            
             <a href="{% url 'core:blog_posts' %}" class="nav-link">
                 <div class="nav-icon"><i class="fas fa-pen-fancy"></i></div>
                 <span class="nav-text">Blog</span>
@@ -77,28 +67,26 @@
         </div>
     </div>
 
-    <!-- Modern Floating Mobile Navbar -->
+    <!-- Modern Floating Mobile Navbar - İkinci Koddan Alınan Stil -->
     <div class="mobile-navbar mobile-only">
         <div class="mobile-nav-container">
-            <a href="{% url 'core:home' %}" class="mobile-nav-link active">
+            <a href="{% url 'core:home' %}" class="mobile-nav-link active" title="Ana Sayfa">
                 <i class="fas fa-home"></i>
             </a>
-            <a href="{%url 'core:unsplash_photos'%}" class="mobile-nav-link">
-                <i class="fas fa-camera"></i>
-            </a>
-            <a href="{% url 'core:projects' %}" class="mobile-nav-link">
-                <i class="fas fa-project-diagram"></i>
-            </a>
-            <a href="{% url 'core:blog_posts' %}" class="mobile-nav-link">
+        
+            <a href="{% url 'core:blog_posts' %}" class="mobile-nav-link" title="Blog">
                 <i class="fas fa-pen-fancy"></i>
             </a>
-            <div class="mobile-menu-btn" id="mobileMenuToggle">
-                <div class="menu-icon">
+            <a href="mailto:melih.yilmaz904@gmail.com" class="mobile-nav-link" title="İletişim">
+                <i class="fas fa-envelope"></i>
+            </a>
+            <button class="mobile-menu-btn" id="mobileMenuToggle" title="Menü">
+                <div class="hamburger">
                     <span></span>
                     <span></span>
                     <span></span>
                 </div>
-            </div>
+            </button>
         </div>
     </div>
 
@@ -110,7 +98,7 @@
                     <img src="{% static 'images/Profil1.png' %}" alt="Profile" class="mobile-avatar">
                     <div class="mobile-profile-info">
                         <h3>Melih Yılmaz</h3>
-                        <p>Full Stack Developer</p>
+                        <p>Kişisel Blog</p>
                     </div>
                 </div>
                 <button class="close-menu-btn" id="closeMobileMenu">
@@ -122,16 +110,6 @@
                 <a href="{% url 'core:home' %}" class="mobile-menu-link">
                     <i class="fas fa-home"></i>
                     <span>Ana Sayfa</span>
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-                <a href="{%url 'core:unsplash_photos'%}" class="mobile-menu-link">
-                    <i class="fas fa-camera"></i>
-                    <span>Fotograf</span>
-                    <i class="fas fa-chevron-right"></i>
-                </a>
-                <a href="{% url 'core:projects' %}" class="mobile-menu-link">
-                    <i class="fas fa-project-diagram"></i>
-                    <span>Projeler</span>
                     <i class="fas fa-chevron-right"></i>
                 </a>
                 <a href="{% url 'core:blog_posts' %}" class="mobile-menu-link">
@@ -519,20 +497,17 @@
             justify-content: center;
         }
 
-        /* Mobile Navbar */
+        /* Mobile Navbar - İkinci Koddan Alınan Stil */
         .mobile-navbar {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 40px);
-            max-width: 400px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 50px;
-            padding: 10px;
-            box-shadow: var(--glass-shadow);
+            bottom: 1.5rem;
+            left: 1rem;
+            right: 1rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 0.75rem;
+            box-shadow: var(--shadow-lg);
             z-index: 1000;
             display: none;
         }
@@ -544,46 +519,42 @@
         }
 
         .mobile-nav-link {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            color: var(--text-dark);
+            border-radius: var(--border-radius-md);
+            color: var(--text-muted);
             text-decoration: none;
-            transition: var(--transition);
-            position: relative;
+            transition: all var(--transition-fast);
+            font-size: 1.1rem;
         }
 
+        .mobile-nav-link:hover,
         .mobile-nav-link.active {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-10px);
-        }
-
-        .mobile-nav-link.active::after {
-            content: '';
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            background: var(--primary-color);
-            border-radius: 50%;
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
         }
 
         .mobile-menu-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
+            border: none;
+            border-radius: var(--border-radius-md);
+            background: transparent;
             cursor: pointer;
+            transition: background var(--transition-fast);
         }
 
-        .menu-icon {
+        .mobile-menu-btn:hover {
+            background: var(--hover-bg);
+        }
+
+        .hamburger {
             width: 20px;
             height: 14px;
             display: flex;
@@ -591,12 +562,25 @@
             justify-content: space-between;
         }
 
-        .menu-icon span {
+        .hamburger span {
             display: block;
             width: 100%;
             height: 2px;
-            background: var(--text-dark);
-            transition: var(--transition);
+            background: var(--text-secondary);
+            border-radius: 1px;
+            transition: all var(--transition-fast);
+        }
+
+        .mobile-menu-btn.active .hamburger span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .mobile-menu-btn.active .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active .hamburger span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
         }
 
         /* Mobile Menu Overlay */
@@ -842,6 +826,74 @@
             body {
                 padding-left: 0 !important;
             }
+        }
+
+        /* İkinci Koddan Eklenen Değişkenler ve Stiller */
+        :root {
+            /* Professional Blog Colors - Calm & Serene */
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary-color: #64748b;
+            --accent-color: #0f172a;
+            
+            /* Neutral Palette */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* Semantic Colors */
+            --text-primary: var(--gray-900);
+            --text-secondary: var(--gray-600);
+            --text-muted: var(--gray-500);
+            --bg-primary: #ffffff;
+            --bg-secondary: var(--gray-50);
+            --border-color: var(--gray-200);
+            --hover-bg: var(--gray-100);
+            
+            /* Typography */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+            
+            /* Spacing & Layout */
+            --sidebar-width: 280px;
+            --border-radius-sm: 6px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark-mode {
+            --text-primary: var(--gray-100);
+            --text-secondary: var(--gray-300);
+            --text-muted: var(--gray-400);
+            --bg-primary: var(--gray-900);
+            --bg-secondary: var(--gray-800);
+            --border-color: var(--gray-700);
+            --hover-bg: var(--gray-800);
+            --primary-color: #3b82f6;
         }
     </style>
 
