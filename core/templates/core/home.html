@@ -2,18 +2,29 @@
 {% load static %}
 
 {% block extra_css %}
+<link rel="preconnect" href="https://res.cloudinary.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- CSS dosyalarını HEAD'de birleştir -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<!-- JavaScript'i sayfa sonuna taşı -->
+
 {% endblock %}
 
 {% block content %}
 <!-- Preload LCP image -->
 <link rel="preload"
-  href="https://res.cloudinary.com/dqm1exvp6/image/upload/v1758143582/Pasted_image_2_qym2fh.png"
+  href="https://res.cloudinary.com/dqm1exvp6/image/upload/w_400/v1758143582/Pasted_image_2_qym2fh.png"
   as="image" fetchpriority="high">
-<!-- Preconnect to critical third-party origins -->
-<link rel="preconnect" href="https://res.cloudinary.com">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
 <!-- Magic Particles -->
 <div class="magic-particles" id="particles"></div>
@@ -21,23 +32,16 @@
 <!-- Hero Section -->
 <section class="hero-section">
   <div class="hero-bg">
-    <!-- Hero görseli - Kalite korunarak optimizasyon -->
-    <img 
-      src="https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto/v1758143582/Pasted_image_2_qym2fh.png" 
+    <img src="https://res.cloudinary.com/dqm1exvp6/image/upload/w_400/v1758143582/Pasted_image_2_qym2fh.png"
       srcset="
-        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_480/v1758143582/Pasted_image_2_qym2fh.png 480w,
-        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_768/v1758143582/Pasted_image_2_qym2fh.png 768w,
-        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_1024/v1758143582/Pasted_image_2_qym2fh.png 1024w,
-        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_1280/v1758143582/Pasted_image_2_qym2fh.png 1280w,
-        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_1920/v1758143582/Pasted_image_2_qym2fh.png 1920w
+        https://res.cloudinary.com/dqm1exvp6/image/upload/w_400/v1758143582/Pasted_image_2_qym2fh.png 400w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/w_800/v1758143582/Pasted_image_2_qym2fh.png 800w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/w_1200/v1758143582/Pasted_image_2_qym2fh.png 1200w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/w_1920/v1758143582/Pasted_image_2_qym2fh.png 1920w
       " 
       sizes="100vw" 
-      alt="Doğa Arka Plan" 
-      width="1920"
-      height="1080" 
-      fetchpriority="high" 
-      decoding="async"
-      loading="eager">
+      alt="Doğa Arka Plan" width="1920" height="1080" 
+      loading="eager" decoding="async">
     <div class="overlay"></div>
   </div>
   <div class="container">
@@ -77,14 +81,8 @@
           aria-label="{{ post.title }}">
           {% if post.image %}
           <div class="blog-image-wrapper">
-            <img 
-              src="{{ post.image.url }}?width=400&height=200&quality=80" 
-              srcset="{{ post.image.url }}?width=400&height=200&quality=80 1x, {{ post.image.url }}?width=800&height=400&quality=70 2x"
-              alt="{{ post.title }}" 
-              loading="lazy"
-              decoding="async" 
-              width="400" 
-              height="200">
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy"
+              decoding="async" width="400" height="200">
             <div class="blog-overlay">
               <span>Devamını Oku</span>
             </div>
@@ -185,7 +183,7 @@
                   </div>
                 </div>
                 <div class="col-md-2">
-                  <button type="submit" class="btn btn-primary h-100 w-100">
+                  <button type="submit" class="btn btn-primary h-150 w-200">
                     Abone Ol
                   </button>
                 </div>
@@ -217,14 +215,6 @@
   </div>
 </section>
 
-<!-- Load external resources -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <script>
   // Create subtle floating particles
   function createMagicParticles() {
@@ -242,11 +232,7 @@
   }
 
   // Initialize particles on load
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', createMagicParticles);
-  } else {
-    createMagicParticles();
-  }
+  window.addEventListener('load', createMagicParticles);
 
   // Newsletter form validation
   document.addEventListener('DOMContentLoaded', function () {
@@ -288,5 +274,8 @@
       });
     }, 5000);
   });
+  
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
 {% endblock %}
