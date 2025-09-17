@@ -3,294 +3,283 @@
 {% load static %}
 
 {% block extra_css %}
-<style>
-    .avatar-md {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-    }
-
-    .avatar-sm {
-        width: 20px;
-        height: 20px;
-        object-fit: cover;
-    }
-
-    .reply-item {
-        margin-left: 3rem;
-        border-left: 2px solid #dee2e6;
-        padding-left: 1rem;
-    }
-
-    .captcha {
-        margin: 15px 0;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 0px;
-    }
-
-    .captcha img {
-        margin-bottom: 10px;
-        border: 1px solid #dee2e6;
-    }
-
-    .featured-image {
-        width: 100%;
-        overflow: hidden;
-        position: relative;
-        transition: height 0.3s ease;
-    }
-
-    .full-width-image {
-        width: 100%;
-        height: 500px;
-        object-fit: cover;
-        object-position: center;
-        transition: height 0.3s ease;
-    }
-
-    @media (max-width: 768px) {
-        .full-width-image {
-            height: 300px;
-        }
-    }
-
-    .reply-form {
-        transition: all 0.3s ease;
-        overflow: hidden;
-        margin-top: 1rem;
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 5px;
-    }
-
-    .comment-item {
-        position: relative;
-    }
-
-    .reply-btn {
-        margin-top: 0.5rem;
-    }
-</style>
+<link rel="stylesheet" href="{% static 'css/postdetail.css' %}">
 {% endblock %}
-
 {% block content %}
 
-<!-- Gönderi resmi -->
+<!-- Hero Image -->
 {% if post.image %}
-<div class="featured-image" id="featured-image">
-    <img src="{{ post.image.url }}" class="full-width-image" alt="{{ post.title }}" id="header-image">
+<div class="hero-image">
+    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+    <div class="hero-overlay">
+        <div class="article-container">
+            <h1 class="article-title text-white">{{ post.title }}</h1>
+        </div>
+    </div>
 </div>
 {% endif %}
 
-<!-- Ana container -->
-<article class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
+<!-- Article Content -->
+<article class="article-container">
+    {% if not post.image %}
+    <div class="article-header">
+        <h1 class="article-title">{{ post.title }}</h1>
+    </div>
+    {% endif %}
 
-            <!-- Gönderi içeriği -->
-            <div class="card shadow">
-                <div class="card-body">
-                    <h1 class="card-title mb-4">{{ post.title }}</h1>
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-                        <div class="author-info">
-                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle me-2 avatar-md"
-                                alt="Author">
-                            <span class="fw-bold">{{ post.author }}</span>
-                        </div>
-                        <small class="text-muted">
-                            <i class="fas fa-calendar me-1"></i>{{ post.date_posted|naturaltime }}
-                        </small>
-                    </div>
-                    <div class="content">
-                        {{ post.content|safe }}
-                    </div>
-                </div>
+    <div class="article-meta">
+        <div class="d-flex align-items-center">
+            <img src="{% static 'images/default-avatar.png' %}" class="author-avatar" alt="{{ post.author }}">
+            <div class="author-info ms-3">
+                <span class="author-name">{{ post.author }}</span>
+                <span class="article-date"><i class="far fa-calendar me-1"></i>{{ post.date_posted|naturaltime }}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="article-content">
+        {{ post.content|safe }}
+    </div>
+
+    <div class="article-footer">
+        <div class="d-flex justify-content-between align-items-center py-3 border-top">
+            <div class="article-share">
+                <span class="text-secondary me-2">Paylaş:</span>
+                <!-- Twitter -->
+                <a href="https://twitter.com/intent/tweet?text={{ blog_post.title|urlencode }}&url={{ request.build_absolute_uri }}"
+                    target="_blank" class="text-secondary me-2">
+                    <i class="fab fa-twitter"></i>
+                </a>
+
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank"
+                    class="text-secondary me-2">
+                    <i class="fab fa-facebook"></i>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ blog_post.title|urlencode }}&summary={{ blog_post.summary|default_if_none:''|urlencode }}&source=SiteAdı"
+                    target="_blank" class="text-secondary me-2">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+
+                <!-- Kopyala -->
+                <a href="#"
+                    onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link kopyalandı!');"
+                    class="text-secondary">
+                    <i class="fas fa-link"></i>
+                </a>
             </div>
 
-            <!-- Yorumlar -->
-            <div class="comments-section mt-5">
-                <h3 class="mb-4">💬 Yorumlar ({{ comments.count }})</h3>
+            <div class="article-actions">
+                <button class="btn btn-outline">
+                    <i class="far fa-bookmark me-1"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</article>
 
-                {% if comments.count == 0 %}
-                <div class="alert alert-info">
-                    📭 İlk yorumu sen yap!
-                </div>
-                {% endif %}
+<!-- Comments Section -->
+<div class="article-container">
+    <section class="comments-section">
+        <h2 class="section-title">Yorumlar ({{ comments.count }})</h2>
 
-                <div class="comment-list">
-                    {% for comment in comments %}
-                    <div class="comment-item bg-white p-4 rounded-3 shadow-sm mb-3">
-                        <div class="d-flex align-items-center gap-3 mb-3">
-                            <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle border avatar-md"
-                                alt="{{ comment.name }}">
-                            <div>
-                                <h6 class="mb-0 fw-bold">
-                                    {{ comment.name }} <!-- Direkt formdan gelen name'i göster -->
-                                </h6>
-                                <small class="text-muted">{{ comment.created_at|naturaltime }}</small>
-                            </div>
-                        </div>
-                        <div class="comment-content">
-                            {{ comment.content|linebreaks }}
-                        </div>
+        {% if comments.count == 0 %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💬</div>
+            <h3>Henüz yorum yok</h3>
+            <p class="text-secondary">İlk yorumu siz yaparak sohbete katılın</p>
+        </div>
+        {% endif %}
 
-                        <!-- Yanıt butonu -->
-                        <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="{{ comment.id }}">
-                            <i class="fas fa-reply me-1"></i>Yanıtla
-                        </button>
-
-                        <!-- Yanıt formu (gizli) -->
-                        <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
-                            <form method="POST" action="{% url 'core:post_detail' post.slug %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                                <div class="mb-3">
-                                    <label for="id_name_{{ comment.id }}" class="form-label">Adınız</label>
-                                    <input type="text" name="name" class="form-control" id="id_name_{{ comment.id }}"
-                                        required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="id_email_{{ comment.id }}" class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" id="id_email_{{ comment.id }}"
-                                        required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="id_content_{{ comment.id }}" class="form-label">Yanıtınız</label>
-                                    <textarea name="content" class="form-control" id="id_content_{{ comment.id }}"
-                                        rows="3" required></textarea>
-                                </div>
-                                <div class="mb-3 captcha">
-                                    {{ form.captcha }}
-                                </div>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button type="button" class="btn btn-outline-secondary cancel-reply"
-                                        data-comment-id="{{ comment.id }}">
-                                        İptal
-                                    </button>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-paper-plane me-2"></i>Yanıt Gönder
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <!-- Yanıtlar -->
-                        {% for reply in comment.replies.all %}
-                        <div class="reply-item mt-3 p-3">
-                            <div class="d-flex align-items-center gap-3 mb-2">
-                                <img src="{% static 'images/default-avatar.png' %}"
-                                    class="rounded-circle border avatar-sm" alt="{{ reply.name }}">
-                                <div>
-                                    <h6 class="mb-0 fw-bold">
-                                        {{ reply.name }}
-                                    </h6>
-                                    <small class="text-muted">{{ reply.created_at|naturaltime }}</small>
-                                </div>
-                            </div>
-                            <div class="reply-content">
-                                {{ reply.content|linebreaks }}
-                            </div>
-                        </div>
-                        {% endfor %}
+        <div class="comment-list">
+            {% for comment in comments %}
+            <div class="comment-item">
+                <div class="comment-header">
+                    <img src="{% static 'images/default-avatar.png' %}" class="comment-avatar" alt="{{ comment.name }}">
+                    <div class="comment-meta">
+                        <div class="comment-author">{{ comment.name }}</div>
+                        <div class="comment-date">{{ comment.created_at|naturaltime }}</div>
                     </div>
-                    {% endfor %}
                 </div>
 
-                <!-- Ana yorum formu -->
-                <div class="comment-form mt-5 p-4 bg-light rounded-3">
-                    <h4 class="mb-4">✏️ Yorum Yaz</h4>
+                <div class="comment-content">
+                    {{ comment.content|linebreaks }}
+                </div>
+
+                <button class="reply-btn" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-reply"></i> Yanıtla
+                </button>
+
+                <!-- Reply Form (Hidden) -->
+                <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
+                    <h4 class="mb-3">Yanıt Yaz</h4>
                     <form method="POST" action="{% url 'core:post_detail' post.slug %}">
                         {% csrf_token %}
-                        {% if form.errors %}
-                        <div class="alert alert-danger">
-                            <ul>
-                                {% for field, errors in form.errors.items %}
-                                {% for error in errors %}
-                                <li>{{ error }}</li>
-                                {% endfor %}
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        {% endif %}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
 
-                        <div class="mb-3">
-                            <label for="id_name" class="form-label">Adınız</label>
-                            <input type="text" name="name" class="form-control" id="id_name" required>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="id_name_{{ comment.id }}" class="form-label">Adınız</label>
+                                <input type="text" name="name" class="form-control" id="id_name_{{ comment.id }}"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_email_{{ comment.id }}" class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" id="id_email_{{ comment.id }}"
+                                    required>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="id_email" class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" id="id_email" required>
+
+                        <div>
+                            <label for="id_content_{{ comment.id }}" class="form-label">Yanıtınız</label>
+                            <textarea name="content" class="form-control" id="id_content_{{ comment.id }}" rows="3"
+                                required></textarea>
                         </div>
-                        <div class="mb-3">
-                            <label for="id_content" class="form-label">Yorumunuz</label>
-                            <textarea name="content" class="form-control" id="id_content" rows="5" required></textarea>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" name="subscribe_newsletter" class="form-check-input"
-                                id="id_subscribe_newsletter">
-                            <label class="form-check-label" for="id_subscribe_newsletter">
-                                Yeni gönderilerden e-posta ile haberdar olmak istiyorum
-                            </label>
-                        </div>
-                        <div class="mb-3 captcha">
+
+                        <div class="captcha">
                             {{ form.captcha }}
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-paper-plane me-2"></i>Yorumu Gönder
-                        </button>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button type="button" class="btn btn-outline cancel-reply"
+                                data-comment-id="{{ comment.id }}">
+                                İptal
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Gönder
+                            </button>
+                        </div>
                     </form>
                 </div>
-</article>
+
+                <!-- Replies -->
+                {% for reply in comment.replies.all %}
+                <div class="reply-item mt-3">
+                    <div class="comment-header">
+                        <img src="{% static 'images/default-avatar.png' %}" class="comment-avatar"
+                            alt="{{ reply.name }}">
+                        <div class="comment-meta">
+                            <div class="comment-author">{{ reply.name }}</div>
+                            <div class="comment-date">{{ reply.created_at|naturaltime }}</div>
+                        </div>
+                    </div>
+
+                    <div class="comment-content">
+                        {{ reply.content|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Main Comment Form -->
+        <div class="comment-form">
+            <h3 class="section-title">Yorum Yap</h3>
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'core:post_detail' post.slug %}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="id_name" class="form-label">Adınız</label>
+                        <input type="text" name="name" class="form-control" id="id_name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_email" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="id_email" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_content" class="form-label">Yorumunuz</label>
+                    <textarea name="content" class="form-control" id="id_content" rows="5" required></textarea>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" name="subscribe_newsletter" class="form-check-input"
+                        id="id_subscribe_newsletter">
+                    <label class="form-check-label" for="id_subscribe_newsletter">
+                        Yeni gönderilerden e-posta ile haberdar olmak istiyorum
+                    </label>
+                </div>
+
+                <div class="captcha">
+                    {{ form.captcha }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-paper-plane me-2"></i>Yorumu Gönder
+                </button>
+            </form>
+        </div>
+    </section>
+</div>
 
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Resim boyutunu scroll ile küçült
-    window.addEventListener('scroll', function () {
-        const headerImage = document.getElementById('header-image');
-        if (!headerImage) return;
-        const scrollPosition = window.scrollY;
-        const newHeight = Math.max(200, 500 - scrollPosition * 0.5);
-        headerImage.style.height = `${newHeight}px`;
-    });
 
-    // Yanıt formu yönetimi
-    document.addEventListener('DOMContentLoaded', function () {
-        // Yanıt butonları
+        // Reply form management
         document.querySelectorAll('.reply-btn').forEach(button => {
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-                const commentId = this.getAttribute('data-comment-id');
-                const form = document.getElementById('reply-form-' + commentId);
+            button.addEventListener('click', function () {
+                const commentId = this.dataset.commentId;
+                const form = document.getElementById(`reply-form-${commentId}`);
 
-                // Diğer tüm yanıt formlarını kapat
+                // Close all other reply forms
                 document.querySelectorAll('.reply-form').forEach(f => {
-                    f.style.display = 'none';
+                    if (f.id !== `reply-form-${commentId}`) {
+                        f.style.display = 'none';
+                    }
                 });
 
-                // Mevcut formu aç/kapa
-                if (form) {
-                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
-                    if (form.style.display === 'block') {
-                        form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }
+                // Toggle current form
+                if (form.style.display === 'block') {
+                    form.style.display = 'none';
+                } else {
+                    form.style.display = 'block';
+                    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             });
         });
 
-        // İptal butonları
+        // Cancel reply buttons
         document.querySelectorAll('.cancel-reply').forEach(button => {
             button.addEventListener('click', function () {
-                const commentId = this.getAttribute('data-comment-id');
-                const form = document.getElementById('reply-form-' + commentId);
-                if (form) {
-                    form.style.display = 'none';
+                const commentId = this.dataset.commentId;
+                const form = document.getElementById(`reply-form-${commentId}`);
+                form.style.display = 'none';
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
         });
-    });
 </script>
 {% endblock %}
-

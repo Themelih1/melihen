@@ -3,7 +3,13 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    
+    <!-- Senin CSS dosyan -->
+    <link rel="stylesheet" href="{% static '/css/navbar.css' %}">
 </head>
 
 <body>
@@ -13,15 +19,13 @@
         <!-- Profile Section with Gradient Background -->
         <div class="profile-section">
             <div class="profile-gradient">
-                <img src="{% static 'images/Profil1.png' %}" alt="Profile" class="profile-avatar">
+                <img src="{% static 'images/Profil.png' %}" alt="Profile" class="profile-avatar">
             </div>
             <div class="profile-info">
-                <h3 class="profile-name">Melih Yılmaz</h3>
-                <p class="profile-role">Kişisel Blog</p>
+                <h3 class="profile-name"></h3>
+                <p class="profile-role">Bir köşe, bir ben</p>
                 <div class="profile-social">
-                    <a href="https://github.com/Themelih1" class="social-icon"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/melih-yilmaz-ab6409169/" class="social-icon"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.youtube.com/@melihyilmaz7493" class="social-icon"><i class="fab fa-youtube"></i></a>
+                   
                 </div>
             </div>
         </div>
@@ -33,7 +37,7 @@
                 <span class="nav-text">Ana Sayfa</span>
                 <div class="nav-indicator"></div>
             </a>
-            
+
             <a href="{% url 'core:blog_posts' %}" class="nav-link">
                 <div class="nav-icon"><i class="fas fa-pen-fancy"></i></div>
                 <span class="nav-text">Blog</span>
@@ -73,7 +77,7 @@
             <a href="{% url 'core:home' %}" class="mobile-nav-link active" title="Ana Sayfa">
                 <i class="fas fa-home"></i>
             </a>
-        
+
             <a href="{% url 'core:blog_posts' %}" class="mobile-nav-link" title="Blog">
                 <i class="fas fa-pen-fancy"></i>
             </a>
@@ -95,17 +99,17 @@
         <div class="mobile-menu-container">
             <div class="mobile-menu-header">
                 <div class="mobile-profile">
-                    <img src="{% static 'images/Profil1.png' %}" alt="Profile" class="mobile-avatar">
+                    <img src="{% static 'images/Profil.png' %}" alt="Profile" class="mobile-avatar">
                     <div class="mobile-profile-info">
-                        <h3>Melih Yılmaz</h3>
-                        <p>Kişisel Blog</p>
+                        <h3></h3>
+                        <p class="profile-role">Bir köşe, bir ben.</p>
                     </div>
                 </div>
                 <button class="close-menu-btn" id="closeMobileMenu">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            
+
             <div class="mobile-menu-links">
                 <a href="{% url 'core:home' %}" class="mobile-menu-link">
                     <i class="fas fa-home"></i>
@@ -123,7 +127,7 @@
                     <i class="fas fa-chevron-right"></i>
                 </a>
             </div>
-            
+
             <div class="mobile-menu-footer">
                 <div class="mobile-theme-toggle" id="mobileThemeToggle">
                     <i class="fas fa-moon"></i>
@@ -132,797 +136,39 @@
                         <div class="mobile-switch-knob"></div>
                     </div>
                 </div>
-                <div class="mobile-social-links">
-                    <a href="https://github.com/Themelih1"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/melih-yilmaz-ab6409169/"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://www.youtube.com/@melihyilmaz7493"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
     </div>
 
-    <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3f37c9;
-            --accent-color: #4895ef;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-            --text-light: #f8f9fa;
-            --text-dark: #212529;
-            --text-primary: #4361ee;
-            --text-secondary: #3f37c9;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.18);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-            --font-family: 'Poppins', sans-serif;
-            --font-size-normal: 1rem;
-            --font-size-medium: 1.1rem;
-            --font-size-large: 1.3rem;
-            --font-weight-normal: 400;
-            --font-weight-medium: 500;
-            --font-weight-bold: 600;
-        }
-
-        body.dark-mode {
-            --primary-color: #7209b7;
-            --secondary-color: #560bad;
-            --accent-color: #b5179e;
-            --light-color: #212529;
-            --dark-color: #00060cad;
-            --text-light: #f8f9fa;
-            --text-dark: #f8f9fa;
-            --text-primary: #b5179e;
-            --text-secondary: #7209b7;
-            --glass-bg: rgba(33, 37, 41, 0.85);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.05);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: var(--font-family);
-        }
-
-        body {
-            font-family: var(--font-family);
-            font-weight: var(--font-weight-normal);
-            font-size: var(--font-size-normal);
-            padding-left: 280px;
-            transition: var(--transition);
-        }
-
-        body.dark-mode {
-            background-color: #121212;
-            color: var(--text-light);
-        }
-
-        /* Desktop Sidebar Styles */
-        .modern-sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            height: 100vh;
-            width: 280px;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-right: var(--glass-border);
-            box-shadow: var(--glass-shadow);
-            display: flex;
-            flex-direction: column;
-            z-index: 1000;
-            transition: var(--transition);
-            overflow: hidden;
-        }
-
-        /* Profile Section */
-        .profile-section {
-            padding: 30px 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .profile-gradient {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 15px;
-            border-radius: 50%;
-            padding: 4px;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .profile-avatar {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--light-color);
-        }
-
-        .profile-info {
-            margin-top: 15px;
-        }
-
-        .profile-name {
-            color: var(--text-dark);
-            font-size: var(--font-size-large);
-            font-weight: var(--font-weight-bold);
-            margin-bottom: 8px;
-            transition: var(--transition);
-        }
-
-        .profile-role {
-            color: var(--text-primary);
-            font-size: var(--font-size-normal);
-            font-weight: var(--font-weight-medium);
-            margin-bottom: 15px;
-        }
-
-        .profile-social {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .social-icon {
-            color: var(--text-dark);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .social-icon:hover {
-            color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-
-        /* Navigation Section */
-        .nav-section {
-            flex: 1;
-            padding: 0 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .nav-link {
-            position: relative;
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            border-radius: 8px;
-            color: var(--text-dark);
-            text-decoration: none;
-            transition: var(--transition);
-            overflow: hidden;
-        }
-
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 3px;
-            height: 100%;
-            background: var(--primary-color);
-            transform: scaleY(0);
-            transform-origin: bottom;
-            transition: transform 0.3s ease;
-        }
-
-        .nav-link:hover {
-            background: rgba(67, 97, 238, 0.1);
-        }
-
-        .nav-link.active {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--text-primary);
-        }
-
-        .nav-link.active::before {
-            transform: scaleY(1);
-        }
-
-        .nav-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 15px;
-            color: inherit;
-        }
-
-        .nav-text {
-            font-size: var(--font-size-normal);
-            font-weight: var(--font-weight-medium);
-            flex: 1;
-            color: inherit;
-        }
-
-        .nav-indicator {
-            width: 8px;
-            height: 8px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .nav-link.active .nav-indicator {
-            opacity: 1;
-        }
-
-        /* Collapse Toggle */
-        .collapse-toggle {
-            position: absolute;
-            right: -12px;
-            top: 50px;
-            width: 24px;
-            height: 24px;
-            background: var(--light-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-            z-index: 10;
-        }
-
-        .toggle-circle {
-            width: 20px;
-            height: 20px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .toggle-arrow {
-            color: white;
-            font-size: 10px;
-            transition: var(--transition);
-        }
-
-        .collapse-toggle:hover .toggle-circle {
-            transform: scale(1.1);
-        }
-
-        /* Sidebar Footer */
-        .sidebar-footer {
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .theme-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .toggle-switch {
-            width: 40px;
-            height: 20px;
-            background: #ccc;
-            border-radius: 10px;
-            position: relative;
-            transition: var(--transition);
-        }
-
-        .switch-knob {
-            position: absolute;
-            left: 2px;
-            top: 2px;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .theme-label {
-            font-size: 0.9rem;
-            color: var(--text-dark);
-            font-weight: var(--font-weight-medium);
-        }
-
-        .settings-btn {
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .settings-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
-            transform: rotate(30deg);
-        }
-
-        /* Collapsed Sidebar */
-        .modern-sidebar.collapsed {
-            width: 80px;
-        }
-
-        .modern-sidebar.collapsed ~ body {
-            padding-left: 80px;
-        }
-
-        .modern-sidebar.collapsed .profile-info,
-        .modern-sidebar.collapsed .nav-text,
-        .modern-sidebar.collapsed .theme-label,
-        .modern-sidebar.collapsed .settings-btn {
-            display: none;
-        }
-
-        .modern-sidebar.collapsed .profile-gradient {
-            width: 50px;
-            height: 50px;
-        }
-
-        .modern-sidebar.collapsed .nav-link {
-            justify-content: center;
-            padding: 15px 0;
-        }
-
-        .modern-sidebar.collapsed .nav-icon {
-            margin-right: 0;
-        }
-
-        .modern-sidebar.collapsed .toggle-arrow {
-            transform: rotate(180deg);
-        }
-
-        .modern-sidebar.collapsed .sidebar-footer {
-            justify-content: center;
-        }
-
-        /* Mobile Navbar - İkinci Koddan Alınan Stil */
-        .mobile-navbar {
-            position: fixed;
-            bottom: 1.5rem;
-            left: 1rem;
-            right: 1rem;
-            background: var(--bg-primary);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem;
-            padding: 0.75rem;
-            box-shadow: var(--shadow-lg);
-            z-index: 1000;
-            display: none;
-        }
-
-        .mobile-nav-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .mobile-nav-link {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: var(--border-radius-md);
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: all var(--transition-fast);
-            font-size: 1.1rem;
-        }
-
-        .mobile-nav-link:hover,
-        .mobile-nav-link.active {
-            color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.1);
-        }
-
-        .mobile-menu-btn {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            border-radius: var(--border-radius-md);
-            background: transparent;
-            cursor: pointer;
-            transition: background var(--transition-fast);
-        }
-
-        .mobile-menu-btn:hover {
-            background: var(--hover-bg);
-        }
-
-        .hamburger {
-            width: 20px;
-            height: 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 100%;
-            height: 2px;
-            background: var(--text-secondary);
-            border-radius: 1px;
-            transition: all var(--transition-fast);
-        }
-
-        .mobile-menu-btn.active .hamburger span:nth-child(1) {
-            transform: translateY(6px) rotate(45deg);
-        }
-
-        .mobile-menu-btn.active .hamburger span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-btn.active .hamburger span:nth-child(3) {
-            transform: translateY(-6px) rotate(-45deg);
-        }
-
-        /* Mobile Menu Overlay */
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 2000;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .mobile-menu-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--light-color);
-            border-radius: 20px 20px 0 0;
-            padding: 20px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-
-        .mobile-menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .mobile-profile {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .mobile-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--primary-color);
-        }
-
-        .mobile-profile-info h3 {
-            font-size: var(--font-size-medium);
-            color: var(--text-dark);
-            margin-bottom: 3px;
-            font-weight: var(--font-weight-bold);
-        }
-
-        .mobile-profile-info p {
-            font-size: var(--font-size-normal);
-            color: var(--text-primary);
-            font-weight: var(--font-weight-medium);
-        }
-
-        .close-menu-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--text-dark);
-            cursor: pointer;
-        }
-
-        .mobile-menu-links {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .mobile-menu-link {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            border-radius: 10px;
-            color: var(--text-dark);
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: var(--font-size-normal);
-            font-weight: var(--font-weight-medium);
-        }
-
-        .mobile-menu-link i:first-child {
-            margin-right: 15px;
-            width: 20px;
-            text-align: center;
-            color: var(--text-primary);
-        }
-
-        .mobile-menu-link span {
-            flex: 1;
-            color: inherit;
-        }
-
-        .mobile-menu-link:hover {
-            background: rgba(67, 97, 238, 0.1);
-        }
-
-        .mobile-menu-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .mobile-theme-toggle {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px;
-            cursor: pointer;
-            font-size: var(--font-size-normal);
-            font-weight: var(--font-weight-medium);
-            color: var(--text-dark);
-            border-radius: 10px;
-            transition: var(--transition);
-        }
-
-        .mobile-theme-toggle:hover {
-            background: rgba(67, 97, 238, 0.1);
-        }
-
-        .mobile-theme-toggle i {
-            color: var(--text-primary);
-        }
-
-        .mobile-toggle-switch {
-            width: 40px;
-            height: 20px;
-            background: #ccc;
-            border-radius: 10px;
-            position: relative;
-            margin-left: auto;
-        }
-
-        .mobile-switch-knob {
-            position: absolute;
-            left: 2px;
-            top: 2px;
-            width: 16px;
-            height: 16px;
-            background: white;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .mobile-social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            padding: 10px;
-        }
-
-        .mobile-social-links a {
-            color: var(--text-dark);
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-
-        .mobile-social-links a:hover {
-            color: var(--primary-color);
-            transform: translateY(-3px);
-        }
-
-        /* Dark Mode Styles */
-        body.dark-mode .mobile-menu-container {
-            background: var(--dark-color);
-        }
-
-        body.dark-mode .mobile-profile-info h3,
-        body.dark-mode .mobile-menu-link {
-            color: var(--text-light);
-        }
-
-        body.dark-mode .toggle-switch,
-        body.dark-mode .mobile-toggle-switch {
-            background: #555;
-        }
-
-        body.dark-mode .switch-knob,
-        body.dark-mode .mobile-switch-knob {
-            transform: translateX(20px);
-            background: var(--light-color);
-        }
-
-        body.dark-mode .settings-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Animation for menu icon */
-        .mobile-menu-btn.active .menu-icon span:nth-child(1) {
-            transform: translateY(6px) rotate(45deg);
-        }
-
-        .mobile-menu-btn.active .menu-icon span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .mobile-menu-btn.active .menu-icon span:nth-child(3) {
-            transform: translateY(-6px) rotate(-45deg);
-        }
-
-        /* Responsive Styles */
-        @media (max-width: 992px) {
-            .modern-sidebar {
-                width: 240px;
-            }
-            
-            body {
-                padding-left: 240px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .desktop-only {
-                display: none !important;
-            }
-
-            .mobile-only {
-                display: block;
-            }
-
-            .mobile-navbar {
-                display: block;
-            }
-
-            .mobile-menu-overlay.active {
-                display: block;
-                opacity: 1;
-            }
-
-            .mobile-menu-overlay.active .mobile-menu-container {
-                transform: translateY(0);
-            }
-            
-            body {
-                padding-left: 0 !important;
-            }
-        }
-
-        /* İkinci Koddan Eklenen Değişkenler ve Stiller */
-        :root {
-            /* Professional Blog Colors - Calm & Serene */
-            --primary-color: #2563eb;
-            --primary-light: #3b82f6;
-            --primary-dark: #1e40af;
-            --secondary-color: #64748b;
-            --accent-color: #0f172a;
-            
-            /* Neutral Palette */
-            --gray-50: #f8fafc;
-            --gray-100: #f1f5f9;
-            --gray-200: #e2e8f0;
-            --gray-300: #cbd5e1;
-            --gray-400: #94a3b8;
-            --gray-500: #64748b;
-            --gray-600: #475569;
-            --gray-700: #334155;
-            --gray-800: #1e293b;
-            --gray-900: #0f172a;
-            
-            /* Semantic Colors */
-            --text-primary: var(--gray-900);
-            --text-secondary: var(--gray-600);
-            --text-muted: var(--gray-500);
-            --bg-primary: #ffffff;
-            --bg-secondary: var(--gray-50);
-            --border-color: var(--gray-200);
-            --hover-bg: var(--gray-100);
-            
-            /* Typography */
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            --font-size-xs: 0.75rem;
-            --font-size-sm: 0.875rem;
-            --font-size-base: 1rem;
-            --font-size-lg: 1.125rem;
-            --font-size-xl: 1.25rem;
-            --font-weight-normal: 400;
-            --font-weight-medium: 500;
-            --font-weight-semibold: 600;
-            --font-weight-bold: 700;
-            
-            /* Spacing & Layout */
-            --sidebar-width: 280px;
-            --border-radius-sm: 6px;
-            --border-radius-md: 8px;
-            --border-radius-lg: 12px;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            
-            /* Transitions */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body.dark-mode {
-            --text-primary: var(--gray-100);
-            --text-secondary: var(--gray-300);
-            --text-muted: var(--gray-400);
-            --bg-primary: var(--gray-900);
-            --bg-secondary: var(--gray-800);
-            --border-color: var(--gray-700);
-            --hover-bg: var(--gray-800);
-            --primary-color: #3b82f6;
-        }
-    </style>
+    
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Desktop Elements
             const themeToggle = document.getElementById('themeToggleNature');
             const collapseToggle = document.getElementById('collapseToggleNature');
             const sidebar = document.getElementById('sidebarNature');
-            
+
             // Mobile Elements
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
             const closeMobileMenu = document.getElementById('closeMobileMenu');
             const mobileThemeToggle = document.getElementById('mobileThemeToggle');
-            
+
             // Toggle Sidebar Collapse
             if (collapseToggle && sidebar) {
                 collapseToggle.addEventListener('click', () => {
                     sidebar.classList.toggle('collapsed');
                     localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
                 });
-                
+
                 // Load saved state
                 if (localStorage.getItem('sidebarCollapsed') === 'true') {
                     sidebar.classList.add('collapsed');
                 }
             }
-            
+
             // Toggle Mobile Menu
             if (mobileMenuToggle) {
                 mobileMenuToggle.addEventListener('click', () => {
@@ -931,7 +177,7 @@
                     document.body.style.overflow = mobileMenuOverlay.classList.contains('active') ? 'hidden' : '';
                 });
             }
-            
+
             // Close Mobile Menu
             if (closeMobileMenu) {
                 closeMobileMenu.addEventListener('click', () => {
@@ -940,61 +186,61 @@
                     document.body.style.overflow = '';
                 });
             }
-            
+
             // Toggle Theme Function
             function toggleTheme() {
                 document.body.classList.toggle('dark-mode');
-                
+
                 // Save theme preference
                 const isDarkMode = document.body.classList.contains('dark-mode');
                 localStorage.setItem('darkMode', isDarkMode);
-                
+
                 // Update UI elements
                 updateThemeUI();
-                
+
                 // Update theme text
                 const themeLabels = document.querySelectorAll('.theme-label');
                 themeLabels.forEach(label => {
                     label.textContent = isDarkMode ? 'Açık Mod' : 'Koyu Mod';
                 });
             }
-            
+
             // Update Theme UI Elements
             function updateThemeUI() {
                 const isDarkMode = document.body.classList.contains('dark-mode');
                 const themeSwitches = document.querySelectorAll('.toggle-switch, .mobile-toggle-switch');
                 const themeKnobs = document.querySelectorAll('.switch-knob, .mobile-switch-knob');
                 const moonIcons = document.querySelectorAll('.mobile-theme-toggle i');
-                
+
                 themeSwitches.forEach(switchEl => {
                     switchEl.style.background = isDarkMode ? '#555' : '#ccc';
                 });
-                
+
                 themeKnobs.forEach(knob => {
                     knob.style.transform = isDarkMode ? 'translateX(20px)' : 'translateX(2px)';
                     knob.style.background = isDarkMode ? 'var(--light-color)' : 'white';
                 });
-                
+
                 moonIcons.forEach(icon => {
                     icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
                 });
             }
-            
+
             // Theme Toggle Event Listeners
             if (themeToggle) {
                 themeToggle.addEventListener('click', toggleTheme);
             }
-            
+
             if (mobileThemeToggle) {
                 mobileThemeToggle.addEventListener('click', toggleTheme);
             }
-            
+
             // Load saved theme preference
             if (localStorage.getItem('darkMode') === 'true') {
                 document.body.classList.add('dark-mode');
                 updateThemeUI();
             }
-            
+
             // Close mobile menu when clicking on links
             const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
             mobileMenuLinks.forEach(link => {
@@ -1004,11 +250,11 @@
                     document.body.style.overflow = '';
                 });
             });
-            
+
             // Set active nav link based on current page
             const currentPath = window.location.pathname;
             const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
-            
+
             navLinks.forEach(link => {
                 if (link.href) {
                     const linkPath = new URL(link.href).pathname;
