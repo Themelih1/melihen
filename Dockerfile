@@ -21,4 +21,4 @@ RUN chmod +x /app/entrypoint.sh
 
 ENTRYPOINT ["/app/entrypoint.sh"]
 
-EXPOSE 8000
+EXPOSE 8080

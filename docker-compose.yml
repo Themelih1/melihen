@@ -3,11 +3,11 @@ services:
     build: .
     entrypoint: /app/entrypoint.sh      # Burada entrypoint belirt
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
       - .:/app
     env_file:
       - .env
     environment:
-      - PORT=8000
+      - PORT=8080
     restart: always
