@@ -8,7 +8,7 @@
 {% block content %}
 <!-- Preload LCP image -->
 <link rel="preload"
-  href="https://res.cloudinary.com/dqm1exvp6/image/upload/v1758025132/photo-1585896202909-fbde6c17fc15_uz8cor.avif"
+  href="https://res.cloudinary.com/dqm1exvp6/image/upload/v1758143582/Pasted_image_2_qym2fh.png"
   as="image" fetchpriority="high">
 <!-- Preconnect to critical third-party origins -->
 <link rel="preconnect" href="https://res.cloudinary.com">
@@ -21,14 +21,23 @@
 <!-- Hero Section -->
 <section class="hero-section">
   <div class="hero-bg">
-    <img src="https://res.cloudinary.com/dqm1exvp6/image/upload/v1758025132/photo-1585896202909-fbde6c17fc15_uz8cor.avif"
+    <!-- Hero görseli - Kalite korunarak optimizasyon -->
+    <img 
+      src="https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto/v1758143582/Pasted_image_2_qym2fh.png" 
       srcset="
-            https://res.cloudinary.com/dqm1exvp6/image/upload/v1758025132/photo-1585896202909-fbde6c17fc15_uz8cor.avif 400w,
-            https://res.cloudinary.com/dqm1exvp6/image/upload/v1758025132/photo-1585896202909-fbde6c17fc15_uz8cor.avif 800w,
-            https://res.cloudinary.com/dqm1exvp6/image/upload/v1758025132/photo-1585896202909-fbde6c17fc15_uz8cor.avif 1200w,x
-            https://res.cloudinary.com/dqm1exvp6/image/upload/v1758025132/photo-1585896202909-fbde6c17fc15_uz8cor.avif 1920w
-          " sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 1920px" alt="Doğa Arka Plan" width="1920"
-      height="1080" fetchpriority="high" decoding="async">
+        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_480/v1758143582/Pasted_image_2_qym2fh.png 480w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_768/v1758143582/Pasted_image_2_qym2fh.png 768w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_1024/v1758143582/Pasted_image_2_qym2fh.png 1024w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_1280/v1758143582/Pasted_image_2_qym2fh.png 1280w,
+        https://res.cloudinary.com/dqm1exvp6/image/upload/f_auto,q_auto,w_1920/v1758143582/Pasted_image_2_qym2fh.png 1920w
+      " 
+      sizes="100vw" 
+      alt="Doğa Arka Plan" 
+      width="1920"
+      height="1080" 
+      fetchpriority="high" 
+      decoding="async"
+      loading="eager">
     <div class="overlay"></div>
   </div>
   <div class="container">
@@ -68,8 +77,14 @@
           aria-label="{{ post.title }}">
           {% if post.image %}
           <div class="blog-image-wrapper">
-            <img src="{{ post.image.url }}" alt="{{ post.title }}" loading="lazy"
-              decoding="async" width="400" height="200">
+            <img 
+              src="{{ post.image.url }}?width=400&height=200&quality=80" 
+              srcset="{{ post.image.url }}?width=400&height=200&quality=80 1x, {{ post.image.url }}?width=800&height=400&quality=70 2x"
+              alt="{{ post.title }}" 
+              loading="lazy"
+              decoding="async" 
+              width="400" 
+              height="200">
             <div class="blog-overlay">
               <span>Devamını Oku</span>
             </div>
@@ -227,7 +242,11 @@
   }
 
   // Initialize particles on load
-  window.addEventListener('load', createMagicParticles);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createMagicParticles);
+  } else {
+    createMagicParticles();
+  }
 
   // Newsletter form validation
   document.addEventListener('DOMContentLoaded', function () {
