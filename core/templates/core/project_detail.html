@@ -1,147 +1,302 @@
 {% extends 'core/base.html' %}
+{% load humanize %}
+{% load static %}
 
-{% block title %}{{ project.title }} - Proje Detayı{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/postdetail.css' %}">
+{% endblock %}
+
+{% block head_extra %}
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="{{ post.title }}" />
+<meta property="og:description" content="{{ post.content|striptags|truncatewords:30 }}" />
+<meta property="og:image" content="{% if post.image %}{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-default-image.png' %}{% endif %}" />
+<meta property="og:url" content="{{ request.build_absolute_uri }}" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="Blogunuzun Adı" />
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ post.title }}">
+<meta name="twitter:description" content="{{ post.content|striptags|truncatewords:30 }}">
+<meta name="twitter:image" content="{% if post.image %}{{ request.scheme }}://{{ request.get_host }}{{ post.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-default-image.png' %}{% endif %}">
+{% endblock %}
 
 {% block content %}
-<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-  <div class="max-w-3xl mx-auto">
-    <!-- Başlık ve Meta Bilgiler -->
-    <div class="mb-8 text-center">
-      <div class="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 mb-6">
-        {{ project.category|default:"Web Projesi" }}
-      </div>
-      <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
-        {{ project.title }}
-      </h1>
-      <div class="flex items-center justify-center space-x-4 text-gray-500">
-        <span class="flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-          </svg>
-          {{ project.date_posted|date:"d M Y" }}
-        </span>
-        {% if project.read_time %}
-        <span class="flex items-center">
-          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          {{ project.read_time }} dakika
-        </span>
-        {% endif %}
-      </div>
-    </div>
 
-    <!-- Kapak Görseli -->
-    {% if project.image %}
-    <div class="relative rounded-2xl overflow-hidden mb-12 shadow-xl border border-gray-200">
-      <img 
-        src="{{ project.image.url }}" 
-        alt="{{ project.title }}" 
-        class="w-full h-auto max-h-[32rem] object-cover"
-        loading="lazy"
-      >
-      <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
-    </div>
-    {% endif %}
-
-    <!-- Proje İçeriği -->
-    <div class="prose prose-indigo prose-lg max-w-none mx-auto mb-12">
-      {{ project.description|safe }}
-    </div>
-
-    <!-- Teknolojiler -->
-    {% if project.technologies %}
-    <div class="mb-12">
-      <h3 class="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-        <svg class="w-5 h-5 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-        </svg>
-        Kullanılan Teknolojiler
-      </h3>
-      <div class="flex flex-wrap gap-2">
-        {% for tech in project.technologies.split %}
-          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
-            {{ tech }}
-          </span>
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
-
-    <!-- Proje Linki -->
-    {% if project.url %}
-    <div class="flex flex-col sm:flex-row gap-4 mt-12 pt-8 border-t border-gray-200">
-      <a href="{{ project.url }}" target="_blank" rel="noopener noreferrer"
-         class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 transform hover:-translate-y-1">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-        </svg>
-        Canlı Demo Görüntüle
-      </a>
-      <a href="{% url 'projects:list' %}" 
-         class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z"></path>
-        </svg>
-        Tüm Projelere Dön
-      </a>
-    </div>
-    {% endif %}
-
-    <!-- Ekstra Proje Görselleri -->
-    {% if project.extra_images.all %}
-    <div class="mt-16">
-      <h3 class="text-xl font-semibold text-gray-900 mb-6">Proje Görselleri</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {% for image in project.extra_images.all %}
-        <div class="rounded-lg overflow-hidden shadow-md border border-gray-200">
-          <img src="{{ image.image.url }}" alt="{{ project.title }} - Ekran görüntüsü {{ forloop.counter }}" 
-               class="w-full h-auto object-cover hover:scale-105 transition-transform duration-300 cursor-zoom-in">
+<!-- Hero Image -->
+{% if post.image %}
+<div class="hero-image">
+    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+    <div class="hero-overlay">
+        <div class="article-container">
+            <h1 class="article-title text-white">{{ post.title }}</h1>
         </div>
-        {% endfor %}
-      </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Article Content -->
+<article class="article-container">
+    {% if not post.image %}
+    <div class="article-header">
+        <h1 class="article-title">{{ post.title }}</h1>
     </div>
     {% endif %}
-  </div>
-</section>
 
-<!-- Tailwind Typography için özel stil -->
-<style>
-  .prose {
-    color: #374151;
-  }
-  .prose a {
-    color: #4f46e5;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  .prose a:hover {
-    text-decoration: underline;
-  }
-  .prose img {
-    border-radius: 0.5rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .prose h2 {
-    color: #111827;
-    font-weight: 700;
-    font-size: 1.5rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-  .prose h3 {
-    color: #111827;
-    font-weight: 600;
-    font-size: 1.25rem;
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
-  }
-  .prose code {
-    background-color: #f3f4f6;
-    padding: 0.2em 0.4em;
-    border-radius: 0.25em;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  }
-</style>
+    <div class="article-meta">
+        <div class="d-flex align-items-center">
+            <img src="{% static 'images/default-avatar.png' %}" class="author-avatar" alt="{{ post.author }}">
+            <div class="author-info ms-3">
+                <span class="author-name">{{ post.author }}</span>
+                <span class="article-date"><i class="far fa-calendar me-1"></i>{{ post.date_posted|naturaltime }}</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="article-content">
+        {{ post.content|safe }}
+    </div>
+
+    <div class="article-footer">
+        <div class="d-flex justify-content-between align-items-center py-3 border-top">
+            <div class="article-share">
+                <span class="text-secondary me-2">Paylaş:</span>
+                <!-- Twitter -->
+                <a href="https://twitter.com/intent/tweet?text={{ blog_post.title|urlencode }}&url={{ request.build_absolute_uri }}"
+                    target="_blank" class="text-secondary me-2">
+                    <i class="fab fa-twitter"></i>
+                </a>
+
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}" target="_blank"
+                    class="text-secondary me-2">
+                    <i class="fab fa-facebook"></i>
+                </a>
+
+                <!-- LinkedIn -->
+                <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}&title={{ blog_post.title|urlencode }}&summary={{ blog_post.summary|default_if_none:''|urlencode }}&source=SiteAdı"
+                    target="_blank" class="text-secondary me-2">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+
+                <!-- Kopyala -->
+                <a href="#"
+                    onclick="navigator.clipboard.writeText('{{ request.build_absolute_uri }}'); alert('Link kopyalandı!');"
+                    class="text-secondary">
+                    <i class="fas fa-link"></i>
+                </a>
+            </div>
+
+            <div class="article-actions">
+                <button class="btn btn-outline">
+                    <i class="far fa-bookmark me-1"></i>Kaydet
+                </button>
+            </div>
+        </div>
+    </div>
+</article>
+
+<!-- Comments Section -->
+<div class="article-container">
+    <section class="comments-section">
+        <h2 class="section-title">Yorumlar ({{ comments.count }})</h2>
+
+        {% if comments.count == 0 %}
+        <div class="empty-state">
+            <div class="empty-state-icon">💬</div>
+            <h3>Henüz yorum yok</h3>
+            <p class="text-secondary">İlk yorumu siz yaparak sohbete katılın</p>
+        </div>
+        {% endif %}
+
+        <div class="comment-list">
+            {% for comment in comments %}
+            <div class="comment-item">
+                <div class="comment-header">
+                    <img src="{% static 'images/default-avatar.png' %}" class="comment-avatar" alt="{{ comment.name }}">
+                    <div class="comment-meta">
+                        <div class="comment-author">{{ comment.name }}</div>
+                        <div class="comment-date">{{ comment.created_at|naturaltime }}</div>
+                    </div>
+                </div>
+
+                <div class="comment-content">
+                    {{ comment.content|linebreaks }}
+                </div>
+
+                <button class="reply-btn" data-comment-id="{{ comment.id }}">
+                    <i class="fas fa-reply"></i> Yanıtla
+                </button>
+
+                <!-- Reply Form (Hidden) -->
+                <div id="reply-form-{{ comment.id }}" class="reply-form" style="display: none;">
+                    <h4 class="mb-3">Yanıt Yaz</h4>
+                    <form method="POST" action="{% url 'core:post_detail' post.slug %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="id_name_{{ comment.id }}" class="form-label">Adınız</label>
+                                <input type="text" name="name" class="form-control" id="id_name_{{ comment.id }}"
+                                    required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_email_{{ comment.id }}" class="form-label">Email</label>
+                                <input type="email" name="email" class="form-control" id="id_email_{{ comment.id }}"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="id_content_{{ comment.id }}" class="form-label">Yanıtınız</label>
+                            <textarea name="content" class="form-control" id="id_content_{{ comment.id }}" rows="3"
+                                required></textarea>
+                        </div>
+
+                        <div class="captcha">
+                            {{ form.captcha }}
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button type="button" class="btn btn-outline cancel-reply"
+                                data-comment-id="{{ comment.id }}">
+                                İptal
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane me-1"></i> Gönder
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Replies -->
+                {% for reply in comment.replies.all %}
+                <div class="reply-item mt-3">
+                    <div class="comment-header">
+                        <img src="{% static 'images/default-avatar.png' %}" class="comment-avatar"
+                            alt="{{ reply.name }}">
+                        <div class="comment-meta">
+                            <div class="comment-author">{{ reply.name }}</div>
+                            <div class="comment-date">{{ reply.created_at|naturaltime }}</div>
+                        </div>
+                    </div>
+
+                    <div class="comment-content">
+                        {{ reply.content|linebreaks }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Main Comment Form -->
+        <div class="comment-form">
+            <h3 class="section-title">Yorum Yap</h3>
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'core:post_detail' post.slug %}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="id_name" class="form-label">Adınız</label>
+                        <input type="text" name="name" class="form-control" id="id_name" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_email" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" id="id_email" required>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="id_content" class="form-label">Yorumunuz</label>
+                    <textarea name="content" class="form-control" id="id_content" rows="5" required></textarea>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" name="subscribe_newsletter" class="form-check-input"
+                        id="id_subscribe_newsletter">
+                    <label class="form-check-label" for="id_subscribe_newsletter">
+                        Yeni gönderilerden e-posta ile haberdar olmak istiyorum
+                    </label>
+                </div>
+
+                <div class="captcha">
+                    {{ form.captcha }}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-paper-plane me-2"></i>Yorumu Gönder
+                </button>
+            </form>
+        </div>
+    </section>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+
+        // Reply form management
+        document.querySelectorAll('.reply-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const commentId = this.dataset.commentId;
+                const form = document.getElementById(`reply-form-${commentId}`);
+
+                // Close all other reply forms
+                document.querySelectorAll('.reply-form').forEach(f => {
+                    if (f.id !== `reply-form-${commentId}`) {
+                        f.style.display = 'none';
+                    }
+                });
+
+                // Toggle current form
+                if (form.style.display === 'block') {
+                    form.style.display = 'none';
+                } else {
+                    form.style.display = 'block';
+                    form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+
+        // Cancel reply buttons
+        document.querySelectorAll('.cancel-reply').forEach(button => {
+            button.addEventListener('click', function () {
+                const commentId = this.dataset.commentId;
+                const form = document.getElementById(`reply-form-${commentId}`);
+                form.style.display = 'none';
+            });
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+</script>
 {% endblock %}

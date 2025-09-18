@@ -109,7 +109,6 @@ body {
 }
 
 .display-3 {
-    color: rgb(33, 97, 60);
     font-size: clamp(2.5rem, 6vw, 4.5rem);
     font-weight: 300;
     margin-bottom: 1.5rem;
@@ -117,7 +116,14 @@ body {
     letter-spacing: -0.02em;
     opacity: 0;
     animation: fadeInUp 1.2s ease-out 0.5s forwards;
+
+    /* Gradient Text */
+    background: linear-gradient(135deg, #000000 0%, #ffffff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
+
 
 .text-gradient {
     background: linear-gradient(135deg, #2a9d8f 0%, #4a9eff 100%);
@@ -202,15 +208,6 @@ body {
     text-decoration: none;
 }
 
-/* Scroll indicator */
-.scroll-down {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    opacity: 0;
-    animation: fadeIn 1s ease-out 2s forwards, gentle-bounce 2s ease-in-out 3s infinite;
-}
 
 .scroll-down a {
     color: white;

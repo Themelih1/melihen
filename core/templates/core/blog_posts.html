@@ -8,50 +8,65 @@
 {% block content %}
 
 <div class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <h1 class="display-5 fw-light text-center">Blog</h1>
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap">
+        <h1 class="display-5 fw-light text-center mb-3 mb-md-0">
+        <a href="{% url 'core:blog_posts' %}" class="text-decoration-none text-dark">Blog</a></h1>
+        <!-- Filtre Paneli -->
         <div class="position-relative">
-            <button class="btn btn-sm btn-outline-dark rounded-pill px-3 py-2 d-flex align-items-center" type="button"
-                id="filterButton" aria-expanded="false" aria-controls="filterCollapse"
-                data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-                <i class="bi bi-funnel me-2"></i>
-                Filtrele
+            <button class="btn btn-outline-primary rounded-pill px-3 py-2 d-flex align-items-center"
+                    type="button" id="filterButton" data-bs-toggle="collapse" data-bs-target="#filterCollapse"
+                    aria-expanded="false" aria-controls="filterCollapse">
+                <i class="bi bi-funnel me-2"></i> Filtrele
             </button>
 
-            <div id="filterCollapse" class="collapse position-absolute end-0 mt-2 bg-white p-3 rounded shadow" 
-                style="width: 280px; z-index: 1000;">
-                <div class="card border-0">
-                    <div class="card-body">
-                        <h6 class="card-title mb-3">Kategoriler</h6>
-                        <div class="list-group list-group-flush mb-4">
-                            <a href="?category=all&sort={{ request.GET.sort }}" 
-                               class="list-group-item list-group-item-action {% if not selected_category %}active{% endif %}">
-                                Tümü
-                            </a>
-                            {% for category in categories %}
-                            <a href="?category={{ category.slug }}&sort={{ request.GET.sort }}" 
-                               class="list-group-item list-group-item-action {% if selected_category.slug == category.slug %}active{% endif %}">
-                                {{ category.name }}
-                            </a>
-                            {% endfor %}
-                        </div>
-                        
-                        <h6 class="card-title mb-3">Sırala</h6>
-                        <div class="list-group list-group-flush">
-                            <a href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}sort=newest" 
-                               class="list-group-item list-group-item-action {% if request.GET.sort == 'newest' or not request.GET.sort %}active{% endif %}">
-                                Yeniden Eskiye
-                            </a>
-                            <a href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}sort=oldest" 
-                               class="list-group-item list-group-item-action {% if request.GET.sort == 'oldest' %}active{% endif %}">
-                                Eskiden Yeniye
-                            </a>
-                        </div>
-                    </div>
+            <div id="filterCollapse" class="collapse position-absolute end-0 mt-2 bg-white p-3 rounded shadow"
+                 style="width: 280px; z-index: 1000;">
+                <div class="list-group list-group-flush">
+                    <!-- Tümü -->
+                    <a href="?category=all&sort={{ request.GET.sort }}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if not selected_category %}active{% endif %}">
+                        Tümü
+                        <span class="badge bg-primary rounded-pill">{{ posts.paginator.count }}</span>
+                    </a>
+
+                    <!-- Kategoriler -->
+                    {% for category in categories %}
+                    <a href="?category={{ category.slug }}&sort={{ request.GET.sort }}"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center {% if selected_category.slug == category.slug %}active{% endif %}">
+                        {{ category.name }}
+                        <span class="badge bg-primary rounded-pill">{{ category.blog_posts.count }}</span>
+                    </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Sıralama -->
+                <h6 class="card-title mt-4 mb-2">Sırala</h6>
+                <div class="list-group list-group-flush">
+                    <a href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}sort=newest"
+                       class="list-group-item list-group-item-action {% if request.GET.sort == 'newest' or not request.GET.sort %}active{% endif %}">
+                        Yeniden Eskiye
+                    </a>
+                    <a href="?{% if selected_category %}category={{ selected_category.slug }}&{% endif %}sort=oldest"
+                       class="list-group-item list-group-item-action {% if request.GET.sort == 'oldest' %}active{% endif %}">
+                        Eskiden Yeniye
+                    </a>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Aktif filtre bilgisi -->
+    {% if selected_category %}
+    <div class="alert alert-info mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>{{ selected_category.name }}</strong> kategorisindeki yazılar gösteriliyor.
+        </div>
+        <a href="?category=all&sort={{ request.GET.sort }}" class="text-decoration-none">
+            <i class="bi bi-x-circle"></i> Filtreyi temizle
+        </a>
+    </div>
+    {% endif %}
 
     <div class="row">
         {% for post in posts %}
@@ -60,14 +75,18 @@
                 {% if post.image %}
                 <div class="post-image mb-4 ratio ratio-16x9">
                     <img src="{{ post.image.url }}" alt="{{ post.title }}"
-                        class="img-fluid rounded object-fit-cover">
+                         class="img-fluid rounded object-fit-cover">
                 </div>
                 {% endif %}
 
                 <div class="post-meta mb-2">
                     <span class="text-muted">{{ post.date_posted|date:"d F Y" }}</span>
-                    {% if post.category %}
-                    <span class="badge bg-light text-dark ms-2">{{ post.category.name }}</span>
+                    {% if post.categories.all %}
+                    <span class="badge bg-light text-dark ms-2">
+                        {% for category in post.categories.all %}
+                        {{ category.name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </span>
                     {% endif %}
                 </div>
 
@@ -100,15 +119,15 @@
                     {% if posts.has_previous %}
                     <li class="page-item">
                         <a class="page-link"
-                            href="?page=1{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
-                            aria-label="First">
+                           href="?page=1{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                           aria-label="First">
                             <span aria-hidden="true">&laquo;&laquo;</span>
                         </a>
                     </li>
                     <li class="page-item">
                         <a class="page-link"
-                            href="?page={{ posts.previous_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
-                            aria-label="Previous">
+                           href="?page={{ posts.previous_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                           aria-label="Previous">
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
@@ -119,22 +138,22 @@
                     <li class="page-item active"><span class="page-link">{{ i }}</span></li>
                     {% else %}
                     <li class="page-item"><a class="page-link"
-                            href="?page={{ i }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ i }}</a></li>
+                        href="?page={{ i }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}">{{ i }}</a></li>
                     {% endif %}
                     {% endfor %}
 
                     {% if posts.has_next %}
                     <li class="page-item">
                         <a class="page-link"
-                            href="?page={{ posts.next_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
-                            aria-label="Next">
+                           href="?page={{ posts.next_page_number }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                           aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
                         </a>
                     </li>
                     <li class="page-item">
                         <a class="page-link"
-                            href="?page={{ posts.paginator.num_pages }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
-                            aria-label="Last">
+                           href="?page={{ posts.paginator.num_pages }}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}"
+                           aria-label="Last">
                             <span aria-hidden="true">&raquo;&raquo;</span>
                         </a>
                     </li>
@@ -146,23 +165,50 @@
     {% endif %}
 </div>
 
+<!-- Modern CSS ve JS -->
+<style>
+#filterButton {
+    transition: all 0.2s ease;
+}
+#filterButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.collapse.show {
+    animation: fadeInSlide 0.3s ease forwards;
+}
+@keyframes fadeInSlide {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 576px) {
+    #filterCollapse {
+        position: absolute !important;
+        top: 60px;  /* butonun hemen altından başlasın */
+        right: 0;
+        width: 60%;  /* ekranın %90’ı kadar genişlik */
+        max-height: 400px;  /* yüksekliği sınırlı */
+        overflow-y: auto;   /* fazla içerik kaydırılabilir olsun */
+        border-radius: 0.5rem !important;
+        padding: 1rem;
+        background-color: #fff;
+        z-index: 1050;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        ;
+    }
+}
+</style>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Dışarı tıklandığında kapat
-    document.addEventListener('click', function(event) {
-        const filterButton = document.getElementById('filterButton');
-        const filterCollapse = document.getElementById('filterCollapse');
-        
-        const isClickInside = filterButton.contains(event.target) || 
-                            (filterCollapse && filterCollapse.contains(event.target));
-        
-        if (!isClickInside && filterCollapse.classList.contains('show')) {
-            const bsCollapse = new bootstrap.Collapse(filterCollapse, {
-                toggle: true
-            });
-            bsCollapse.hide();
-        }
-    });
+document.addEventListener('click', function(event) {
+    const filterButton = document.getElementById('filterButton');
+    const filterCollapse = document.getElementById('filterCollapse');
+    const isClickInside = filterButton.contains(event.target) || (filterCollapse && filterCollapse.contains(event.target));
+    if (!isClickInside && filterCollapse.classList.contains('show')) {
+        const bsCollapse = new bootstrap.Collapse(filterCollapse, { toggle: true });
+        bsCollapse.hide();
+    }
 });
 </script>
+
 {% endblock %}

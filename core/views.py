@@ -24,6 +24,8 @@ from django.utils.translation import gettext as _
 from django.urls import reverse
 from django.core.mail import EmailMultiAlternatives
 import logging
+from django.db.models import Count
+
 
 logger = logging.getLogger(__name__)
 
@@ -56,7 +58,6 @@ def unsplash_my_photos(request):
     return render(request, "core/my_unsplash_photos.html", {
         "photos": photos,
     })
-
 
 # Profil Görünümü
 def profile_view(request):
@@ -248,11 +249,37 @@ def tag_posts(request, slug):
         'posts': posts
     })
 
-# Tüm Blog Yazıları
 def blog_posts(request):
-    posts = BlogPost.objects.all().order_by('-date_posted')
-    return render(request, 'core/blog_posts.html', {'posts': posts})
+    # Tüm kategorileri al ve her kategoriye ait yazı sayısını ekle
+    categories = Category.objects.annotate(post_count=Count('blog_posts'))
 
+    # Kategori filtresi
+    category_slug = request.GET.get('category')
+    if category_slug and category_slug != 'all':
+        selected_category = get_object_or_404(Category, slug=category_slug)
+        posts = BlogPost.objects.filter(categories=selected_category, status='published')
+    else:
+        selected_category = None
+        posts = BlogPost.objects.filter(status='published')
+
+    # Sıralama filtresi
+    sort_option = request.GET.get('sort', 'newest')
+    if sort_option == 'oldest':
+        posts = posts.order_by('date_posted')
+    else:  # newest (varsayılan)
+        posts = posts.order_by('-date_posted')
+
+    # Sayfalama
+    paginator = Paginator(posts, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'core/blog_posts.html', {
+        'posts': page_obj,
+        'categories': categories,
+        'selected_category': selected_category,
+        'sort_option': sort_option
+    })
 
 def projects(request):
     projects = Project.objects.all().order_by('-created_at')  # veya '-start_date'

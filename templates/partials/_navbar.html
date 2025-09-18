@@ -3,11 +3,11 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
-    
+
     <!-- Senin CSS dosyan -->
     <link rel="stylesheet" href="{% static '/css/navbar.css' %}">
 </head>
@@ -19,17 +19,17 @@
         <!-- Profile Section with Gradient Background -->
         <div class="profile-section">
             <div class="profile-gradient">
-                <img src="{% static 'images/Profil.png' %}" alt="Profile" class="profile-avatar">
+                <a href="{% url 'core:home' %}">
+                    <img src="{% static 'images/Profil.png' %}" alt="Profile" class="profile-avatar">
+                </a>
             </div>
             <div class="profile-info">
                 <h3 class="profile-name"></h3>
                 <p class="profile-role">Bir köşe, bir ben</p>
                 <div class="profile-social">
-                   
                 </div>
             </div>
         </div>
-
         <!-- Navigation with Animated Indicators -->
         <div class="nav-section">
             <a href="{% url 'core:home' %}" class="nav-link active">
@@ -99,7 +99,9 @@
         <div class="mobile-menu-container">
             <div class="mobile-menu-header">
                 <div class="mobile-profile">
+                    <a href="{% url 'core:home' %}"></a>
                     <img src="{% static 'images/Profil.png' %}" alt="Profile" class="mobile-avatar">
+                        </a>
                     <div class="mobile-profile-info">
                         <h3></h3>
                         <p class="profile-role">Bir köşe, bir ben.</p>
@@ -136,12 +138,12 @@
                         <div class="mobile-switch-knob"></div>
                     </div>
                 </div>
-                </div>
             </div>
         </div>
     </div>
+    </div>
 
-    
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
